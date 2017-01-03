@@ -1,0 +1,22 @@
+{
+  "name": "samplekingdom",
+  "version": "0.0.0",
+  "description": "样本管理工具",
+  "main": "index.html",
+  "window": {
+    "title": "样本管理工具",
+    "icon": "logo",
+    "position": "center",
+    "toolbar": true,
+    "width": 1000,
+    "height": 800,
+    "resizable": true,
+    "show_in_taskbar": true,
+    "frame": true
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
