@@ -1,25 +1,22 @@
-<div class="row" id="createProjectDiv">
-    <div class="col-md-6 col-md-offset-3">
-        <form ng-controller="ChatListController">
+<div class="row" ng-controller="ChatListController">
+    <p>在下方列表选择要导出的聊天列表</p>
+    <div class="col-md-6" style="height:700px; overflow:scroll;">
+        <table class="table table-striped" >
+            <tr>
+                <th>聊天名</th>
+                <th>聊天消息总数</th>
+            </tr>
+            <tr ng-repeat="(key, value) in dbTables" ng-click="">
+                <td>{{value[0]}}</td>
+                <td>{{value[1]}}</td>
+            </tr>
+        </table>
+    </div>
+    <div class="col-md-6">
+        <form>
             this is chat list : {{filePath}}
-            <button class="btn btn-primary btn-lg" ng-click = "onBtnClick()" >click me</button>
             <div class="form-group">
-                <div class="row">
-                    <div class="col-md-4"><label><h4>选择项目目录</h4></label></div>
-                    <div class="col-md-8"><input ng-model="projectFolder" on-file-change="onFilesSelected" class="form-control" type="file" nwdirectory></div>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="row">
-                    <div class="col-md-4"><label><h4>设置项目名称</h4></label></div>
-                    <div class="col-md-8"><input ng-model="projectName" class="form-control" type="text"></div>
-                </div>
-            </div>
-            <div class="form-group">
-                <p class="bg-info">将在[项目目录:{{projectFolder}}]中新建[项目名称:{{projectName}}]文件夹</p>
-            </div>
-            <div class="form-group">
-                <button ui-sref="sampleCutting" class="btn btn-primary btn-lg col-md-2 col-md-offset-5">开始</button>
+                <button  class="btn btn-primary btn-lg col-md-2 col-md-offset-5">开始</button>
             </div>
         </form>
     </div>
