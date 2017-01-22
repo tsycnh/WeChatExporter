@@ -6,17 +6,18 @@
                 <th>聊天名</th>
                 <th>聊天消息总数</th>
             </tr>
-            <tr ng-repeat="(key, value) in dbTables" ng-click="">
+            <tr ng-repeat="(key, value) in dbTables" ng-click="onChatTableSelected(value[0])" >
                 <td>{{value[0]}}</td>
                 <td>{{value[1]}}</td>
             </tr>
         </table>
     </div>
     <div class="col-md-6">
+        <p>已选择：{{tableSelected}}</p>
         <form>
             this is chat list : {{filePath}}
             <div class="form-group">
-                <button  class="btn btn-primary btn-lg col-md-2 col-md-offset-5">开始</button>
+                <button ng-click="onChatTableSelected()"  class="btn btn-primary btn-lg col-md-2 col-md-offset-5">开始</button>
             </div>
         </form>
     </div>

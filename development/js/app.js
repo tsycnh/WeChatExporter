@@ -36,6 +36,21 @@ WechatBackup.config(function ($stateProvider,$urlRouterProvider) {
             }
         }
     };
+    var tutorialState = {
+        name:"tutorial",
+        url:"/tutorial",
+        views:{
+            '':{
+                templateUrl:"/templates/index.html"
+            },
+            'topbar@tutorial':{
+                templateUrl:"/templates/topbar.html"
+            },
+            'main@tutorial':{
+                templateUrl:"/templates/tutorial.html"
+            }
+        }
+    };
     // var sampleCuttingState = {
     //     name:"sampleCutting",
     //     url:"/sampleCutting",
@@ -68,7 +83,7 @@ WechatBackup.config(function ($stateProvider,$urlRouterProvider) {
     // };
     $stateProvider.state(entryState);
     $stateProvider.state(chatListState);
-    // $stateProvider.state(sampleCuttingState);
+    $stateProvider.state(tutorialState);
     // $stateProvider.state(testState);
 
 });

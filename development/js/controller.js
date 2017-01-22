@@ -19,6 +19,8 @@ WechatBackupControllers.controller('ChatListController',function ($scope,$state,
     // $scope.projectName = "defaultName";
     $scope.dbTables = [];
     $scope.totalTablesCount = -1;
+    $scope.tableSelected = "";
+
     $scope.ChatListController = function () {
         console.log("constructor");
         // sqlite3相关文档：https://github.com/mapbox/node-sqlite3/wiki/API
@@ -81,7 +83,6 @@ WechatBackupControllers.controller('ChatListController',function ($scope,$state,
                 console.log("rowName:",result[0],"count:",result[1]);
                 $scope.dbTables.push(result);
                     if($scope.dbTables.length == $scope.totalTablesCount){
-                        console.log($scope.dbTables);
                         console.log("scope apply,tables count:",$scope.dbTables.length)
                         $scope.$apply();
                     }
@@ -95,50 +96,16 @@ WechatBackupControllers.controller('ChatListController',function ($scope,$state,
                 console.log("complete error:",error);
             }
         });
-       // var stmt = db.prepare("select count(*) as count from (?)");
-        //stmt.run("Chat_0b8bedc6d8a6c8e69158e733a8137205");
-
-        // db.all("select count(*) as count from (?)","Chat_0b8bedc6d8a6c8e69158e733a8137205",
-        //     function (error,result) {
-        //         if(!error) {
-        //             console.log("count:", result);
-        //         }else{
-        //             console.log("count:", error);
-        //         }
-        //     });
-        // db.run("select count(*) as count from $table",{
-        //     $table : "Chat_165a100d5e335d624e3dba4d7cd555f9"
-        // },function () {
-        //
-        // })
-        //$scope.$apply();
-
     };
 
     $scope.onFilesSelected = function(files) {
         console.log("files - " + files);
     };
     $scope.filePath = $stateParams.sqliteFilePath;
-    // $scope.onBtnClick = function () {
-    //     console.log("btn clicked");
-    //     //$state.go('entry');
-    //     // 引用sqlite3
-    //     var sqlite3 = require('sqlite3').verbose();
-    //
-    //     var db = new sqlite3.Database('/tmp/1.db',function() {
-    //         db.run("create table test(name varchar(15))",function(){
-    //             db.run("insert into test values('hello,world')",function(){
-    //                 db.all("select * from test",function(err,res){
-    //                     if(!err)
-    //                         console.log(JSON.stringify(res));
-    //                     else
-    //                         console.log(err);
-    //                 });
-    //             })
-    //         });
-    //     });
-    // };
-    
-
     $scope.ChatListController();
+
+    $scope.onChatTableSelected = function (tableName) {
+        //alert(tableName);
+        $scope.tableSelected = tableName;
+    }
 });
