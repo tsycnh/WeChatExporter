@@ -1,24 +1,46 @@
 <div class="row" ng-controller="ChatListController">
-    <p>在下方列表选择要导出的聊天列表</p>
-    <div class="col-md-6" style="height:700px; overflow:scroll;">
-        <table class="table table-striped" >
-            <tr>
-                <th>聊天名</th>
-                <th>聊天消息总数</th>
-            </tr>
-            <tr ng-repeat="(key, value) in dbTables" ng-click="onChatTableSelected(value[0])" >
-                <td>{{value[0]}}</td>
-                <td>{{value[1]}}</td>
-            </tr>
-        </table>
-    </div>
     <div class="col-md-6">
-        <p>已选择：{{tableSelected}}</p>
-        <form>
-            this is chat list : {{filePath}}
-            <div class="form-group">
-                <button ng-click="onChatTableSelected()"  class="btn btn-primary btn-lg col-md-2 col-md-offset-5">开始</button>
+        <div class="row">在下方列表选择要导出的聊天列表，默认只显示大于10条的聊天记录</div>
+        <div class="row" style="height:700px; overflow:scroll;">
+            <table class="table table-striped" >
+                <tr>
+                    <th>聊天名</th>
+                    <th>聊天消息总数</th>
+                </tr>
+                <tr ng-repeat="(key, value) in dbTables" ng-click="onChatTableSelected(value[0])" >
+                    <td>{{value[0]}}</td>
+                    <td>{{value[1]}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-12">
+                <p>已选择：{{tableSelected}}</p>
+                <p>显示10条信息用于确认聊天对象</p>
+                <!--<p>{{filePath}}</p>-->
             </div>
-        </form>
+            <!--<div class="col-md-3">-->
+                <!--<button ng-click="readTableContents()"  class="btn btn-primary">聊天记录预览</button>-->
+
+            <!--</div>-->
+        </div>
+        <div class="row" style="height:700px; overflow:scroll;">
+            <div class="table-responsive">
+                
+            <table class="table table-striped">
+                <tr>
+                    <th style="min-width: 150px;">时间</th>
+                    <th >聊天内容</th>
+                </tr>
+                <tr ng-repeat="(key,value) in previewData">
+                    <td>{{value.time}}</td>
+                    <td>{{value.message}}</td>
+                </tr>
+            </table>
+            </div>
+        </div>
     </div>
 </div>
