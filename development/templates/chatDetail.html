@@ -1,0 +1,42 @@
+<div id="chat-window" style="height:700px; overflow:scroll;" class="row zs-chat-window" ng-controller="ChatDetailController">
+    <!--chat detail:{{tableName}}-->
+    <button class="btn" ng-click="buttonClicked()">click me</button>
+    <input id="zs-scroll-input" ng-change="inputChange()" ng-model="scrollToBottom">scrollToBottom:{{scrollToBottom}}
+    <div class="row" ng-repeat="(key,message) in chatData">
+        <div class="col-md-1 col-sm-1 col-xs-1">
+            <img ng-show="{{message.owner == 1?'true':'false'}}" width="50" height="50" src="../imgs/icon-test/other.jpg" alt="">
+        </div>
+        <div class="col-md-9 col-sm-9 col-xs-9 zs-message">
+            <div ng-bind-html = "message.content | trustHtml" class="zs-message-content {{message.owner == 0?'pull-right zs-message-content-me':'pull-left zs-message-content-other'}}">
+            </div>
+        </div>
+        <div class="col-md-1 col-sm-1 col-xs-1">
+            <div class="row">
+            <img ng-show="{{message.owner == 0?'true':'false'}}" width="50" height="50" src="../imgs/icon-test/me.jpg" alt="">
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-2 col-md-offset-5"><button ng-click="loadMore()" class="btn btn-default">加载更多</button></div>
+    </div>
+
+</div>
+
+<script>
+$(document).ready(function (){
+    var nScrollHight = 0; //滚动距离总长(注意不是滚动条的长度)
+    var nScrollTop = 0;  //滚动到的当前位置
+    var nDivHight = $("#chat-window").height();
+    var count = 0;
+    $("#chat-window").scroll(function(){
+        nScrollHight = $(this)[0].scrollHeight;
+        nScrollTop = $(this)[0].scrollTop;
+        if(nScrollTop + nDivHight >= nScrollHight)
+        {
+            count+=1;
+            $("#zs-scroll-input").val(count);
+            //alert("滚动条到底部了");
+        }
+    });
+});
+</script>

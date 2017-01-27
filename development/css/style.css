@@ -36,4 +36,20 @@
 #cuttingArea{
     height: 650px;
     background-color: aquamarine;
+    display: inline-block;
+}
+/* chatDetail Page */
+.zs-chat-window{
+    background-color: #f3f3f3;
+}
+.zs-message{
+    margin-bottom: 10px;
+}
+.zs-message-content{
+    background-color: #83f256 ;
+    padding: 10px;
+    border-radius: 10px;
+}
+.zs-message-content-other{
+    background-color: #ffffff;
 }

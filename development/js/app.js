@@ -1,7 +1,7 @@
 // 定义app模块，并声明其依赖的模块。
 // 模块说明：ui.router: 路由模块 参考：https://ui-router.github.io/ng1/
 //         WechatBackupControllers:所有控制器 定义在 js/controllers.js
-var WechatBackup = angular.module('WechatBackup',['ui.router','WechatBackupControllers','WechatBackupDirectives']);
+var WechatBackup = angular.module('WechatBackup',['ui.router','WechatBackupControllers','WechatBackupDirectives','WechatBackupFilters','ngSanitize']);
 WechatBackup.config(function ($stateProvider,$urlRouterProvider) {
     $urlRouterProvider.otherwise('/entry');
     // 进入页面，选择Sqlite文件
@@ -36,6 +36,23 @@ WechatBackup.config(function ($stateProvider,$urlRouterProvider) {
             }
         }
     };
+    // 聊天详情页面
+    var chatDetailState = {
+        name:"chatDetail",
+        url:"/chatDetail/:tableName/:sqliteFilePath",
+        views:{
+            '':{
+                templateUrl:"/templates/index.html"
+            },
+            'topbar@chatDetail':{
+                templateUrl:"/templates/topbar.html"
+            },
+            'main@chatDetail':{
+                templateUrl:"/templates/chatDetail.html"
+            }
+        }
+    };
+    // 教程页面
     var tutorialState = {
         name:"tutorial",
         url:"/tutorial",
@@ -51,21 +68,7 @@ WechatBackup.config(function ($stateProvider,$urlRouterProvider) {
             }
         }
     };
-    // var sampleCuttingState = {
-    //     name:"sampleCutting",
-    //     url:"/sampleCutting",
-    //     views:{
-    //         '':{
-    //             templateUrl:"/templates/index.html"
-    //         },
-    //         'topbar@sampleCutting':{
-    //             templateUrl:"/templates/topbar.html"
-    //         },
-    //         'main@sampleCutting':{
-    //             templateUrl:"/templates/sampleCutting.html"
-    //         }
-    //     }
-    // };
+
     // var testState = {
     //     name:"test",
     //     url:"/test",
@@ -84,6 +87,7 @@ WechatBackup.config(function ($stateProvider,$urlRouterProvider) {
     $stateProvider.state(entryState);
     $stateProvider.state(chatListState);
     $stateProvider.state(tutorialState);
+    $stateProvider.state(chatDetailState);
     // $stateProvider.state(testState);
 
 });

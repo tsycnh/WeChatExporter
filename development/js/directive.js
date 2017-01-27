@@ -10,7 +10,7 @@ WechatBackupDirectives.directive("hello",function () {
         template:"<div> I'm test...</div>",
         replace:true
     }
-})
+});
 WechatBackupDirectives.directive('onFileChange', function() {
     return {
         restrict: 'A',
@@ -26,6 +26,18 @@ WechatBackupDirectives.directive('onFileChange', function() {
                 });
             });
 
+        }
+    };
+});
+WechatBackupDirectives.directive('testD', function (){
+    return {
+        require: 'ngModel',
+        link: function(scope, element, attrs, ngModel) {
+            scope.$watch(function () {
+                return ngModel.$modelValue;
+            }, function(newValue) {
+                console.log(newValue);
+            });
         }
     };
 });

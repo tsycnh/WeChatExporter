@@ -17,19 +17,19 @@
 
     <div class="col-md-6">
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-9">
                 <p>已选择：{{tableSelected}}</p>
                 <p>显示10条信息用于确认聊天对象</p>
                 <!--<p>{{filePath}}</p>-->
             </div>
-            <!--<div class="col-md-3">-->
-                <!--<button ng-click="readTableContents()"  class="btn btn-primary">聊天记录预览</button>-->
+            <div class="col-md-3">
+                <button ng-click="exportChat(tableSelected)"  class="btn btn-primary">导出聊天记录</button>
 
-            <!--</div>-->
+            </div>
         </div>
         <div class="row" style="height:700px; overflow:scroll;">
             <div class="table-responsive">
-                
+
             <table class="table table-striped">
                 <tr>
                     <th style="min-width: 150px;">时间</th>
