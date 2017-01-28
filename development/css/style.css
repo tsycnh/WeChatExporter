@@ -42,6 +42,9 @@
 .zs-chat-window{
     background-color: #f3f3f3;
 }
+.zs-message-wrapper{
+    margin: 10px;
+}
 .zs-message{
     margin-bottom: 10px;
 }

@@ -163,8 +163,8 @@ WechatBackupControllers.controller('ChatDetailController',function ($scope, $sta
     $scope.scrollToBottom = -1;
     $scope.count = 0;
     $scope.db = {};
-    $scope.limitStart = 0;
-    $scope.limitGap = 10;// 每次加载10条消息
+    $scope.limitStart = 0;// 加载起始位置（包含）
+    $scope.limitGap = 50;// 每次加载10条消息
 
     // 加载聊天记录
     $scope.loadMore = function () {
@@ -175,7 +175,6 @@ WechatBackupControllers.controller('ChatDetailController',function ($scope, $sta
                     owner:rows[i].Des,
                     content:""
                 };
-
                 switch(rows[i].Type)
                 {
                     case 1:// 文字消息
@@ -232,20 +231,16 @@ WechatBackupControllers.controller('ChatDetailController',function ($scope, $sta
     });
 
 
-    $scope.$watch('myVar', function() {
-        alert('hey, myVar has changed!');
-    });
-
-    $scope.buttonClicked = function() {
-        $scope.myVar = 2; // This will trigger $watch expression to kick in
-    };
-
     $scope.templateImage = function (row) {
-        var fs = require("fs");
-        fs.readFile($scope.imgFolderPath+"/"+row.MesLocalID+".jpg",function (error, data) {
+        var fs = require('fs');
+        var data = fs.readFileSync($scope.imgFolderPath+"/"+row.MesLocalID+".pic_thum");
 
-        })
-        var imgTag = "<img src='"+$scope.imgFolderPath+"/"+row.MesLocalID+".jpg"+"'></img>";
+        //console.log(data);
+        var imgTag = "<img>";
+        if(data != undefined) {
+            var a = data.toString("base64");
+            imgTag = "<img src='data:image/jpeg;base64," + a + "'/>";
+        }
         return imgTag;
     }
 });
@@ -267,9 +262,7 @@ function formatTimeStamp(timeStamp) {
 function templateMessage(row) {
     return row.Message;
 }
-// function templateImage(row) {
-//     var a = "<img src=''></img>";
-// }
+
 // 获取目录路径,返回值包括斜线形如："/abc/bsd/to/"
 function getFolderPath(sqliteFilePath) {
     console.log(sqliteFilePath);

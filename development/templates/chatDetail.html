@@ -1,8 +1,8 @@
 <div id="chat-window" style="height:700px; overflow:scroll;" class="row zs-chat-window" ng-controller="ChatDetailController">
-    <!--chat detail:{{tableName}}-->
-    <button class="btn" ng-click="buttonClicked()">click me</button>
-    <input id="zs-scroll-input" ng-change="inputChange()" ng-model="scrollToBottom">scrollToBottom:{{scrollToBottom}}
-    <div class="row" ng-repeat="(key,message) in chatData">
+
+    <!--<input id="zs-scroll-input" ng-change="inputChange()" ng-model="scrollToBottom">scrollToBottom:{{scrollToBottom}}-->
+
+    <div class="row zs-message-wrapper" ng-repeat="(key,message) in chatData">
         <div class="col-md-1 col-sm-1 col-xs-1">
             <img ng-show="{{message.owner == 1?'true':'false'}}" width="50" height="50" src="../imgs/icon-test/other.jpg" alt="">
         </div>
@@ -17,7 +17,7 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-md-2 col-md-offset-5"><button ng-click="loadMore()" class="btn btn-default">加载更多</button></div>
+        <div class="col-sm-2 col-md-2 col-sm-offset-5 col-md-offset-5"><button ng-click="loadMore()" class="btn btn-default">加载更多</button></div>
     </div>
 
 </div>
