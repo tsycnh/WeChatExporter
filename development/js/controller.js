@@ -155,16 +155,17 @@ WechatBackupControllers.controller('ChatDetailController',function ($scope, $sta
 
     $scope.tableName = $stateParams.tableName;
     $scope.filePath = $stateParams.sqliteFilePath; //sqlite 文件路径
-    $scope.folderPath = "";// 备份根路径，精确到md5
-    $scope.imgFolderPath = "";// 图像路径
-    $scope.meMd5 = "";// 我的
-    $scope.chatterMd5 = "";// 聊天者的Md5值
+    $scope.folderPath = "";     // 备份根路径，精确到md5
+    $scope.imgFolderPath = "";  // 图像路径
+    $scope.audioFolderPath = "";// 语音路径
+    $scope.meMd5 = "";          // 我的Md5值
+    $scope.chatterMd5 = "";     // 聊天者的Md5值
     $scope.chatData = [];
     $scope.scrollToBottom = -1;
     $scope.count = 0;
-    $scope.db = {};
-    $scope.limitStart = 0;// 加载起始位置（包含）
-    $scope.limitGap = 50;// 每次加载10条消息
+    $scope.db = {};             // 数据库
+    $scope.limitStart = 0;      // 加载起始位置（包含）
+    $scope.limitGap = 50;       // 每次加载limitGap条消息，默认50
 
     // 加载聊天记录
     $scope.loadMore = function () {
@@ -184,9 +185,13 @@ WechatBackupControllers.controller('ChatDetailController',function ($scope, $sta
                         message.content = $scope.templateImage(rows[i]);
                         break;
                     case 34:// 语音消息
-                        message.content = "[语音消息]";
+                        message.content = $scope.templateAudio(rows[i]);
+                        break;
+                    case 47:// 动画表情
+                        message.content = "动画表情";
+                        break;
                     default:
-                        message.content = "type id:"+rows[i].Type;
+                        message.content = "未知消息类型：type id:"+rows[i].Type;
                 }
                 $scope.chatData.push(message);
             }
@@ -200,13 +205,14 @@ WechatBackupControllers.controller('ChatDetailController',function ($scope, $sta
     $scope.ChatDetailController = function () {
         //console.log("enter ChatDetailController");
         // /Users/shidanlifuhetian/All/Tdevelop/微信备份数据库/微信2017年01月07日备份/Documents/4ff9910cd14885aa373c45c4b7909ba7/DB/MM.sqlite
-
+        // 初始化各种路径
         $scope.folderPath = getFolderPath($scope.filePath);
         //console.log($scope.folderPath);
         $scope.meMd5 = getMyMd5($scope.folderPath);
         $scope.chatterMd5 = getChatterMd5($scope.tableName);
         console.log($scope.meMd5);
-        $scope.imgFolderPath = $scope.folderPath +"Img/"+$scope.chatterMd5;
+        $scope.imgFolderPath = $scope.folderPath + "Img/" + $scope.chatterMd5 + "/";
+        $scope.audioFolderPath = $scope.folderPath + "Audio/" + $scope.chatterMd5 + "/";
         var sqlite3 = require('sqlite3');
         // 打开一个sqlite数据库
         var db = new sqlite3.Database($scope.filePath,sqlite3.OPEN_READONLY,function (error) {
@@ -215,7 +221,7 @@ WechatBackupControllers.controller('ChatDetailController',function ($scope, $sta
             }
         });
         $scope.db = db;
-        $scope.loadMore();
+        $scope.loadMore();// 载入数据库内容
 
     };
     $scope.ChatDetailController();
@@ -233,16 +239,39 @@ WechatBackupControllers.controller('ChatDetailController',function ($scope, $sta
 
     $scope.templateImage = function (row) {
         var fs = require('fs');
-        var data = fs.readFileSync($scope.imgFolderPath+"/"+row.MesLocalID+".pic_thum");
+        var data = fs.readFileSync($scope.imgFolderPath+row.MesLocalID+".pic_thum");
 
-        //console.log(data);
         var imgTag = "<img>";
         if(data != undefined) {
             var a = data.toString("base64");
             imgTag = "<img src='data:image/jpeg;base64," + a + "'/>";
         }
         return imgTag;
+    };
+    $scope.templateAudio = function (row) {
+        var fs = require('fs');
+        //var data = fs.readFileSync($scope.audioFolderPath+"/"+row.MesLocalID+".mp3");
+        var audioFilePath = $scope.audioFolderPath+row.MesLocalID+".wav";
+        var audioTag = "<audio></audio>";
+        if(fs.existsSync(audioFilePath))// 若wav文件存在
+        {
+            audioTag = "<audio src='file://"+audioFilePath+"' controls='controls'></audio>";
+        }else{
+            var command = $scope.audioFolderPath + "silk-v3-decoder/converter.sh ../"+row.MesLocalID + ".aud wav";
+            var stdOut = require('child_process').execSync( command,{
+                encoding: "utf8"
+            } );
+            console.log(stdOut);
+            if(stdOut.indexOf("Finish") > 0)// 存在Finish,即转换成功
+            {
+                audioTag = "<audio src='file://"+audioFilePath+"' controls='controls'></audio>";
+            }else {
+                audioTag = "[语音读取出错]";
+            }
+        }
+        return audioTag;
     }
+
 });
 
 // useful functions
