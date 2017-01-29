@@ -167,6 +167,17 @@ WechatBackupControllers.controller('ChatDetailController',function ($scope, $sta
     $scope.limitStart = 0;      // 加载起始位置（包含）
     $scope.limitGap = 50;       // 每次加载limitGap条消息，默认50
 
+    //检测是否存在音频解码器
+    $scope.audioDecoderExist = function () {
+        var fs = require('fs');
+
+        if(!fs.existsSync($scope.audioFolderPath+"/converter.sh")) return false;
+        if(!fs.existsSync($scope.audioFolderPath+"/silk/decoder")) return false;
+        if(!fs.existsSync($scope.audioFolderPath+"/silk/libSKP_SILK_SDK.a")) return false;
+
+        return true;
+
+    };
     // 加载聊天记录
     $scope.loadMore = function () {
         var sql = "SELECT * FROM "+$scope.tableName+" order by CreateTime limit "+$scope.limitStart+","+$scope.limitGap;
@@ -187,8 +198,26 @@ WechatBackupControllers.controller('ChatDetailController',function ($scope, $sta
                     case 34:// 语音消息
                         message.content = $scope.templateAudio(rows[i]);
                         break;
+                    case 43:// 视频消息
+                        message.content = "【视频消息】";
+                        break;
+                    case 62:// 小视频消息
+                        message.content = "【小视频消息】";
+                        break;
                     case 47:// 动画表情
                         message.content = "动画表情";
+                        break;
+                    case 49:// 分享链接
+                        message.content = "分享链接";
+                        break;
+                    case 48:// 位置
+                        message.content = "位置";
+                        break;
+                    case 42:// 名片
+                        message.content = "名片";
+                        break;
+                    case 50:// 语音、视频电话
+                        message.content = "语音、视频电话";
                         break;
                     default:
                         message.content = "未知消息类型：type id:"+rows[i].Type;
@@ -214,6 +243,7 @@ WechatBackupControllers.controller('ChatDetailController',function ($scope, $sta
         $scope.imgFolderPath = $scope.folderPath + "Img/" + $scope.chatterMd5 + "/";
         $scope.audioFolderPath = $scope.folderPath + "Audio/" + $scope.chatterMd5 + "/";
         var sqlite3 = require('sqlite3');
+        // 拷贝silk-v3-decoder至对应的Audio文件夹
         // 打开一个sqlite数据库
         var db = new sqlite3.Database($scope.filePath,sqlite3.OPEN_READONLY,function (error) {
             if (error){
@@ -221,8 +251,34 @@ WechatBackupControllers.controller('ChatDetailController',function ($scope, $sta
             }
         });
         $scope.db = db;
-        $scope.loadMore();// 载入数据库内容
 
+        console.log("开始拷贝silk-vs-decoder文件夹");
+        //copyFolderRecursiveSync("./framework/silk-v3-decoder",$scope.audioFolderPath);
+
+        if($scope.audioDecoderExist())
+        {
+            $scope.loadMore();// 载入数据库内容
+
+        }else{
+            var path = require('path');
+            var ncp = require('ncp').ncp;
+
+            ncp.limit = 16;
+
+            //var srcPath = path.dirname(require.main.filename); //current folder
+            // 拷贝silk-v3-decoder 的内容到目标文件夹内
+            var srcPath = './framework/silk-v3-decoder'; //current folder
+            var destPath = $scope.audioFolderPath; //
+
+            console.log('Copying files...');
+            ncp(srcPath, destPath, function (err) {
+                if (err) {
+                    return console.error(err);
+                }
+                console.log("拷贝silk-vs-decoder结束");
+                $scope.loadMore();// 载入数据库内容
+            });
+        }
     };
     $scope.ChatDetailController();
     $scope.inputChange = function () {
@@ -235,6 +291,7 @@ WechatBackupControllers.controller('ChatDetailController',function ($scope, $sta
         console.log("new:",newValue," old:",oldValue);
         //$scope.$apply();
     });
+
 
 
     $scope.templateImage = function (row) {
@@ -257,8 +314,8 @@ WechatBackupControllers.controller('ChatDetailController',function ($scope, $sta
         {
             audioTag = "<audio src='file://"+audioFilePath+"' controls='controls'></audio>";
         }else{
-            var command = $scope.audioFolderPath + "silk-v3-decoder/converter.sh ../"+row.MesLocalID + ".aud wav";
-            var stdOut = require('child_process').execSync( command,{
+            var command = $scope.audioFolderPath + "converter.sh "+row.MesLocalID + ".aud wav";
+            var stdOut = require('child_process').execSync( command,{// child_process会调用sh命令，pc会调用cmd.exe命令
                 encoding: "utf8"
             } );
             console.log(stdOut);
@@ -271,6 +328,7 @@ WechatBackupControllers.controller('ChatDetailController',function ($scope, $sta
         }
         return audioTag;
     }
+
 
 });
 
