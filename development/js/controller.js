@@ -12,7 +12,8 @@ WechatBackupControllers.controller('EntryController',function ($scope,$state) {
     }
 
 });
-
+WechatBackupControllers.controller('TopBarController',function ($scope,$rootScope) {
+});
 // chatList.html页面的controller
 WechatBackupControllers.controller('ChatListController',function ($scope,$state, $stateParams) {
     $scope.dbTables = [];

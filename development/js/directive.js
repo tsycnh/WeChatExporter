@@ -41,3 +41,25 @@ WechatBackupDirectives.directive('testD', function (){
         }
     };
 });
+WechatBackupDirectives.directive('goToPreviousPage',function () {
+    return {
+        restrict : "A",
+        link: function(scope, element, attrs) {
+            element.on('click', function() {
+                history.back();
+                scope.$apply();
+            });
+        }
+    }
+});
+WechatBackupDirectives.directive('goToNextPage',function () {
+    return {
+        restrict : "A",
+        link: function(scope, element, attrs) {
+            element.on('click', function() {
+                history.forward();
+                scope.$apply();
+            });
+        }
+    }
+});
