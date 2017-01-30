@@ -158,6 +158,7 @@ WechatBackupControllers.controller('ChatDetailController',function ($scope, $sta
     $scope.folderPath = "";     // 备份根路径，精确到md5
     $scope.imgFolderPath = "";  // 图像路径
     $scope.audioFolderPath = "";// 语音路径
+    $scope.videoFolderPath = "";// 视频路径
     $scope.meMd5 = "";          // 我的Md5值
     $scope.chatterMd5 = "";     // 聊天者的Md5值
     $scope.chatData = [];
@@ -199,10 +200,10 @@ WechatBackupControllers.controller('ChatDetailController',function ($scope, $sta
                         message.content = $scope.templateAudio(rows[i]);
                         break;
                     case 43:// 视频消息
-                        message.content = "【视频消息】";
+                        message.content = $scope.templateImage(rows[i]);
                         break;
                     case 62:// 小视频消息
-                        message.content = "【小视频消息】";
+                        message.content = $scope.templateVideo(rows[i]);
                         break;
                     case 47:// 动画表情
                         message.content = "动画表情";
@@ -242,6 +243,7 @@ WechatBackupControllers.controller('ChatDetailController',function ($scope, $sta
         console.log($scope.meMd5);
         $scope.imgFolderPath = $scope.folderPath + "Img/" + $scope.chatterMd5 + "/";
         $scope.audioFolderPath = $scope.folderPath + "Audio/" + $scope.chatterMd5 + "/";
+        $scope.videoFolderPath = $scope.folderPath + "Video/" + $scope.chatterMd5 + "/";
         var sqlite3 = require('sqlite3');
         // 拷贝silk-v3-decoder至对应的Audio文件夹
         // 打开一个sqlite数据库
@@ -308,18 +310,18 @@ WechatBackupControllers.controller('ChatDetailController',function ($scope, $sta
     $scope.templateAudio = function (row) {
         var fs = require('fs');
         //var data = fs.readFileSync($scope.audioFolderPath+"/"+row.MesLocalID+".mp3");
-        var audioFilePath = $scope.audioFolderPath+row.MesLocalID+".wav";
+        var audioFilePath = $scope.audioFolderPath+row.MesLocalID+".mp3";
         var audioTag = "<audio></audio>";
         if(fs.existsSync(audioFilePath))// 若wav文件存在
         {
             audioTag = "<audio src='file://"+audioFilePath+"' controls='controls'></audio>";
         }else{
-            var command = $scope.audioFolderPath + "converter.sh "+row.MesLocalID + ".aud wav";
+            var command = $scope.audioFolderPath + "converter.sh "+row.MesLocalID + ".aud mp3";
             var stdOut = require('child_process').execSync( command,{// child_process会调用sh命令，pc会调用cmd.exe命令
                 encoding: "utf8"
             } );
             console.log(stdOut);
-            if(stdOut.indexOf("Finish") > 0)// 存在Finish,即转换成功
+            if(stdOut.indexOf("[OK]") > 0)// 存在OK,即转换成功
             {
                 audioTag = "<audio src='file://"+audioFilePath+"' controls='controls'></audio>";
             }else {
@@ -327,6 +329,35 @@ WechatBackupControllers.controller('ChatDetailController',function ($scope, $sta
             }
         }
         return audioTag;
+    }
+    $scope.templateVideo = function (row) {
+        console.log("load a video: ",$scope.videoFolderPath+row.MesLocalID+".mp4")
+        var fs = require('fs');
+        var videoFilePath = $scope.videoFolderPath+row.MesLocalID+".mp4";
+        var videoTag = "<video></video>";
+        if(fs.existsSync(videoFilePath))// 若文件存在
+        {
+            videoTag = "<video src='file://"+videoFilePath+"' controls='controls'></video>";
+        }else{
+            // var data = fs.readFileSync($scope.videoFolderPath + row.MesLocalID + ".video_thum");
+            // if(data != undefined) {
+            //     var a = data.toString("base64");
+            //     videoTag = "<img src='data:image/jpeg;base64," + a + "'/>";
+            // }
+            // var command = $scope.audioFolderPath + "converter.sh "+row.MesLocalID + ".aud mp3";
+            // var stdOut = require('child_process').execSync( command,{// child_process会调用sh命令，pc会调用cmd.exe命令
+            //     encoding: "utf8"
+            // } );
+            // console.log(stdOut);
+            // if(stdOut.indexOf("[OK]") > 0)// 存在OK,即转换成功
+            // {
+            //     videoTag = "<video src='file://"+videoFilePath+"' controls='controls'></video>";
+            // }else {
+            //     videoTag = "[语音读取出错]";
+            // }
+            videoTag = "【视频不存在】";
+        }
+        return videoTag;
     }
 
 
