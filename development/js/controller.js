@@ -40,7 +40,7 @@ WechatBackupControllers.controller('ChatListController',function ($scope,$state,
              // 回调函数，没获取一个条目，执行一次，第二个参数为当前条目
 
              // 声明一个promise，将条目的name传入resolve
-            let getRowName = new Promise(function (resolve,reject) {
+            var getRowName = new Promise(function (resolve,reject) {
                 if(!error)
                 {
                     //console.log("row name: ",row.name);
@@ -60,10 +60,10 @@ WechatBackupControllers.controller('ChatListController',function ($scope,$state,
             });
              // 声明一个带参数的promise，写法和getRowName略有不同
              var getCount = function (rowName) {
-                 let promise = new Promise(function (resolve,reject) {
+                 var promise = new Promise(function (resolve,reject) {
                      ///
-                     let sql = "select count(*) as count from "+ rowName;
-                     let r = db.get(sql,function (error,result) {
+                     var sql = "select count(*) as count from "+ rowName;
+                     var r = db.get(sql,function (error,result) {
                          if(!error) {
                              //console.log("count:", result.count);
                              //将传入的rowName和结果的count数一并传出去

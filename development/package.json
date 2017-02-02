@@ -1,10 +1,10 @@
 {
   "name": "samplekingdom",
   "version": "0.0.0",
-  "description": "样本管理工具",
+  "description": "小田微信备份",
   "main": "index.html",
   "window": {
-    "title": "样本管理工具",
+    "title": "小田微信备份",
     "icon": "logo",
     "position": "center",
     "toolbar": true,
@@ -20,6 +20,21 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "ncp": "^2.0.0"
+    "express": "3.x",
+    "ncp": "^2.0.0",
+    "sqlite3":"~3.1.8"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-clean": "^0.5.0",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-copy": "^0.4.1",
+    "grunt-contrib-cssmin": "^1.0.2",
+    "grunt-contrib-jshint": "~0.6.3",
+    "grunt-contrib-requirejs": "~0.4.1",
+    "grunt-contrib-uglify": "~0.2.1",
+    "grunt-contrib-watch": "^1.0.0",
+    "grunt-strip": "~0.2.1",
+    "nw-builder": "^3.1.3"
   }
 }
