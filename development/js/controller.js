@@ -1,5 +1,5 @@
 var WechatBackupControllers = angular.module('WechatBackupControllers',[]);
-WechatBackupControllers.controller('EntryController',function ($scope,$state) {
+WechatBackupControllers.controller('EntryController',["$scope","$state",function ($scope,$state) {
     $scope.page = "entry page";
     $scope.sqlFile = "/Users/shidanlifuhetian/All/Tdevelop/微信备份数据库/MM.sqlite";
     $scope.onFileChange = function (files) {
@@ -11,11 +11,11 @@ WechatBackupControllers.controller('EntryController',function ($scope,$state) {
         $state.go('chatList',{sqliteFilePath:sqliteFilePath});
     }
 
-});
-WechatBackupControllers.controller('TopBarController',function ($scope,$rootScope) {
-});
+}]);
+WechatBackupControllers.controller('TopBarController',["$scope","$rootScope",function ($scope,$rootScope) {
+}]);
 // chatList.html页面的controller
-WechatBackupControllers.controller('ChatListController',function ($scope,$state, $stateParams) {
+WechatBackupControllers.controller('ChatListController',["$scope","$state", "$stateParams",function ($scope,$state, $stateParams) {
     $scope.dbTables = [];
     $scope.totalTablesCount = -1;
     $scope.tableSelected = "";
@@ -150,9 +150,9 @@ WechatBackupControllers.controller('ChatListController',function ($scope,$state,
     $scope.exportChat = function (tableName) {
         $state.go('chatDetail',{tableName:tableName,sqliteFilePath:$stateParams.sqliteFilePath});
     }
-});
+}]);
 // chatDetail.html页面的controller
-WechatBackupControllers.controller('ChatDetailController',function ($scope, $state, $stateParams) {
+WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$stateParams",function ($scope, $state, $stateParams) {
 
     $scope.tableName = $stateParams.tableName;
     $scope.filePath = $stateParams.sqliteFilePath; //sqlite 文件路径
@@ -362,7 +362,7 @@ WechatBackupControllers.controller('ChatDetailController',function ($scope, $sta
     }
 
 
-});
+}]);
 
 // useful functions
 function add0(m){return m<10?'0'+m:m }

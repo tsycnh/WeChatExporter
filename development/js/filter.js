@@ -3,8 +3,8 @@
  */
 var WechatBackupFilters = angular.module('WechatBackupFilters',[]);
 
-WechatBackupFilters.filter('trustHtml', function ($sce) {
+WechatBackupFilters.filter('trustHtml', ["$sce",function ($sce) {
     return function (input) {
         return $sce.trustAsHtml(input);
     }
-});
+}]);

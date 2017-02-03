@@ -14,7 +14,7 @@ module.exports = function(grunt){
                     {expand:true,src:["./imgs/**","!./imgs/icon-test/**"],dest:"../build/"},
                     {expand:true,src:["./framework/**","./templates/**","./css/**"],dest:"../build/"},
                     {expand:true,src:["./index.html","./package.json"],dest:"../build/"},
-                    {expand:true,src:["./js/**"],dest:"../build/"}
+                    // {expand:true,src:["./js/**"],dest:"../build/"}
                 ]
             }
         },
@@ -24,6 +24,19 @@ module.exports = function(grunt){
             },
             build:["../build/"]
 
+        },
+        concat:{
+            generated:{
+                files:[{
+                    dest: '.tmp/concat/js/app.js',
+                    src: [
+                        './js/app.js',
+                        './js/controller.js',
+                        './js/directive.js',
+                        './js/filter.js',
+                    ]
+                }]
+            }
         },
         uglify: {
             //文件头部输出信息
@@ -43,15 +56,42 @@ module.exports = function(grunt){
                         rename: function (dest, src) {
                             var folder = src.substring(0, src.lastIndexOf('/'));
                             var filename = src.substring(src.lastIndexOf('/'), src.length);
-                            //  var filename=src;
+                                filename = filename.substring(0, filename.lastIndexOf('.'));
+                            var fileresult=dest + folder + filename + '.min.js';
+                            grunt.log.writeln("现处理文件："+src+"  处理后文件："+fileresult);
+                            return fileresult;
+                        }
+                    }
+                ]
+            },
+            dev_test: {
+                files: [
+                    {
+                        expand: true,
+                        //相对路径
+                        cwd: 'js/',
+                        src: '*.js',
+                        dest: './js/',
+                        rename: function (dest, src) {
+                            var folder = src.substring(0, src.lastIndexOf('/'));
+                            var filename = src.substring(src.lastIndexOf('/'), src.length);
                             filename = filename.substring(0, filename.lastIndexOf('.'));
                             var fileresult=dest + folder + filename + '.min.js';
                             grunt.log.writeln("现处理文件："+src+"  处理后文件："+fileresult);
                             return fileresult;
-                            //return  filename + '.min.js';
                         }
                     }
                 ]
+            },
+            app:{
+                files:{
+                    '../build/js/app.min.js': [
+                        './js/app.js',
+                        './js/controller.js',
+                        './js/directive.js',
+                        './js/filter.js',
+                    ]
+                }
             }
         },
         watch:{
@@ -60,11 +100,15 @@ module.exports = function(grunt){
                 tasks:'uglify'
             }
         },
-        fuck:{
-            a:[1,2,3],
-            b:"gooood",
-            c:false,
-        }
+        useminPrepare: {
+            html: 'index.html',
+            options:{
+                dest:"../build"
+            }
+        },
+        usemin: {
+            html: '../build/index.html'
+        },
 
     });
 
@@ -74,6 +118,8 @@ module.exports = function(grunt){
     grunt.loadNpmTasks("grunt-contrib-watch");
     grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-contrib-concat');
+    grunt.loadNpmTasks('grunt-usemin');
 
 
 
@@ -85,12 +131,12 @@ module.exports = function(grunt){
     });
     grunt.registerTask('copySensitiveFiles',function () {
         grunt.log.writeln("copy sensitive files");
-
+        grunt.task.run('uglify:app');//打包appjs文件
     });
     grunt.registerTask('buildWithNwb',function () {
         grunt.log.writeln("build with nwb tool");
 
     });
     //grunt.registerMultiTasks();
-    grunt.registerTask('dist',['copyCommonFiles','copySensitiveFiles','buildWithNwb']);
+    grunt.registerTask('dist',['useminPrepare','copyCommonFiles','copySensitiveFiles','buildWithNwb','usemin']);
 };
