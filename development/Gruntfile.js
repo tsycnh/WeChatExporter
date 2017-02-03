@@ -16,6 +16,11 @@ module.exports = function(grunt){
                     {expand:true,src:["./index.html","./package.json"],dest:"../build/"},
                     // {expand:true,src:["./js/**"],dest:"../build/"}
                 ]
+            },
+            sqlite3:{
+                src:"./framework/node-webkit-v0.19.3-darwin-x64/**",
+                dest:"../webackapp/wb.app/Contents/Resources/app.nw/node_modules/sqlite3/lib/binding/"
+
             }
         },
         clean:{
@@ -109,6 +114,17 @@ module.exports = function(grunt){
         usemin: {
             html: '../build/index.html'
         },
+        shell: {
+            makeDir: {
+                command: 'mkdir test'
+            },
+            nwbBuild:{
+                command:'sh ./build.sh'
+            },
+            dirListing: {
+                command: 'ls'
+            }
+        }
 
     });
 
@@ -120,7 +136,7 @@ module.exports = function(grunt){
     grunt.loadNpmTasks('grunt-contrib-clean');
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-usemin');
-
+    grunt.loadNpmTasks('grunt-shell');
 
 
     //grunt.registerTask("default",["watch"]);
@@ -135,8 +151,16 @@ module.exports = function(grunt){
     });
     grunt.registerTask('buildWithNwb',function () {
         grunt.log.writeln("build with nwb tool");
-
+        grunt.task.run('shell:nwbBuild');
+        // grunt.task.run('shell:dirListing');
     });
     //grunt.registerMultiTasks();
-    grunt.registerTask('dist',['useminPrepare','copyCommonFiles','copySensitiveFiles','buildWithNwb','usemin']);
+    grunt.registerTask('dist',[
+        'useminPrepare',
+        'copyCommonFiles',
+        'copySensitiveFiles',
+        'usemin',
+        'buildWithNwb',
+        // 'copy:sqlite3'
+    ]);
 };

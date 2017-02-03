@@ -1,10 +1,10 @@
 {
   "name": "samplekingdom",
-  "version": "0.0.0",
-  "description": "小田微信备份",
+  "version": "0.0.1",
+  "description": "小美微信备份",
   "main": "index.html",
   "window": {
-    "title": "小田微信备份",
+    "title": "小美微信备份",
     "icon": "logo",
     "position": "center",
     "toolbar": true,
@@ -34,6 +34,7 @@
     "grunt-contrib-requirejs": "~0.4.1",
     "grunt-contrib-uglify": "~0.2.1",
     "grunt-contrib-watch": "^1.0.0",
+    "grunt-shell": "^2.1.0",
     "grunt-strip": "~0.2.1",
     "grunt-usemin": "^3.1.1",
     "nw-builder": "^3.1.3"
