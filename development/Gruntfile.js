@@ -18,8 +18,10 @@ module.exports = function(grunt){
                 ]
             },
             sqlite3:{
-                src:"./framework/node-webkit-v0.19.3-darwin-x64/**",
-                dest:"../webackapp/wb.app/Contents/Resources/app.nw/node_modules/sqlite3/lib/binding/"
+                expand: true,
+                cwd:"framework",
+                src:"node-webkit-v0.19.3-darwin-x64/**",
+                dest:"../小美微信备份Release/小美微信备份.app/Contents/Resources/app.nw/node_modules/sqlite3/lib/binding/"
 
             }
         },
@@ -161,6 +163,6 @@ module.exports = function(grunt){
         'copySensitiveFiles',
         'usemin',
         'buildWithNwb',
-        // 'copy:sqlite3'
+        'copy:sqlite3'
     ]);
 };

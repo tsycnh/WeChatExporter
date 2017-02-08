@@ -174,6 +174,7 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
         var fs = require('fs');
 
         if(!fs.existsSync($scope.audioFolderPath+"/converter.sh")) return false;
+        if(!fs.existsSync($scope.audioFolderPath+"/ffmpeg")) return false;
         if(!fs.existsSync($scope.audioFolderPath+"/silk/decoder")) return false;
         if(!fs.existsSync($scope.audioFolderPath+"/silk/libSKP_SILK_SDK.a")) return false;
 
@@ -255,32 +256,24 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
         });
         $scope.db = db;
 
-        console.log("开始拷贝silk-vs-decoder文件夹");
-        //copyFolderRecursiveSync("./framework/silk-v3-decoder",$scope.audioFolderPath);
-
         if($scope.audioDecoderExist())
         {
             $scope.loadMore();// 载入数据库内容
 
         }else{
-            var path = require('path');
-            var ncp = require('ncp').ncp;
+            var fse = require('fs-extra');
 
-            ncp.limit = 16;
-
-            //var srcPath = path.dirname(require.main.filename); //current folder
             // 拷贝silk-v3-decoder 的内容到目标文件夹内
             var srcPath = './framework/silk-v3-decoder'; //current folder
             var destPath = $scope.audioFolderPath; //
+            console.log("开始拷贝silk-vs-decoder文件夹");
 
-            console.log('Copying files...');
-            ncp(srcPath, destPath, function (err) {
-                if (err) {
-                    return console.error(err);
-                }
-                console.log("拷贝silk-vs-decoder结束");
+            fse.copy(srcPath, destPath, function (err) {
+                if (err) return console.error(err)
+                console.log('拷贝silk-vs-decoder成功!')
                 $scope.loadMore();// 载入数据库内容
-            });
+
+            });// copies directory, even if it has subdirectories or files
         }
     };
     $scope.ChatDetailController();
