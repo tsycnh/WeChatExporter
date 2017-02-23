@@ -3,16 +3,21 @@
     <div class="col-md-4 col-md-offset-4">
         <form class="form-horizontal">
             <div class="form-group">
-                <label>选择 MM.sqlite 文件</label>
-                <input type="file" class="form-control" on-file-change="onFileChange">
+                <label>选择 Documents 文件路径</label>
+                <!--<input type="file" class="form-control" on-file-change="onFileChange">-->
+                <input type="text" class="form-control" ng-model="dPath">
+                <p>Documents路径：{{dPath}}</p>
             </div>
             <div class="form-group">
-            <button ng-click="importSqliteFile(sqlFile)" class="btn btn-block btn-primary">导入微信备份</button>
+            <button ng-click="loadDocuments(dPath)" class="btn btn-block btn-primary">进入分析模式</button>
+            <!--<button ng-click="importSqliteFile(sqlFile)" class="btn btn-block btn-primary">导入微信备份</button>-->
             </div>
+            <!--
             <div class="form-group">
 
             <button class="btn btn-block btn-success" ui-sref="tutorial">教程：如何从iPhone导出微信备份</button>
                 </div>
+                -->
         </form>
         <!--<h4>使用说明</h4>-->
         <!--<ol>-->
