@@ -10,7 +10,23 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
         // 使用ui-router实现页面跳转
         $state.go('chatList',{sqliteFilePath:sqliteFilePath});
     }
+    $scope.EntryController = function () {
+        console.log("entry controller constructor");
 
+        var si = require('systeminformation');
+
+// callback style
+        si.system(function(data) {
+            console.log(data.serial);// 获取当前电脑的唯一认证序列号。
+        });
+
+// // promises style - new in version 3
+//         si.cpu()
+//             .then(data => console.log(data))
+//
+//             .catch(error => console.error(error));
+    };
+    $scope.EntryController();
 }]);
 WechatBackupControllers.controller('TopBarController',["$scope","$rootScope",function ($scope,$rootScope) {
 }]);
