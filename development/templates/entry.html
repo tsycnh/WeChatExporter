@@ -4,25 +4,20 @@
         <form class="form-horizontal">
             <div class="form-group">
                 <label>选择 Documents 文件路径</label>
-                <!--<input type="file" class="form-control" on-file-change="onFileChange">-->
                 <input type="text" class="form-control" ng-model="dPath">
-                <p>Documents路径：{{dPath}}</p>
+                <p>Documents路径：</p>
+                <p>{{dPath}}</p>
+                <label>用户MD5</label>
+                <input type="text" class="form-control" ng-model="wechatUserMD5">
+                <label>数据表名</label>
+                <input type="text" class="form-control" ng-model="chatTableName">
             </div>
             <div class="form-group">
-            <button ng-click="loadDocuments(dPath)" class="btn btn-block btn-primary">进入分析模式</button>
-            <!--<button ng-click="importSqliteFile(sqlFile)" class="btn btn-block btn-primary">导入微信备份</button>-->
+            <button ng-click="startGeneration(dPath,wechatUserMD5,chatTableName)" class="btn btn-block btn-primary">开始生成数据</button>
             </div>
-            <!--
-            <div class="form-group">
 
-            <button class="btn btn-block btn-success" ui-sref="tutorial">教程：如何从iPhone导出微信备份</button>
-                </div>
-                -->
         </form>
-        <!--<h4>使用说明</h4>-->
-        <!--<ol>-->
-            <!--<li>在软件主页选择MM.sqlite文件即可</li>-->
-        <!--</ol>-->
+
     </div>
 
 </div>

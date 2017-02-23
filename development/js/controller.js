@@ -1,10 +1,160 @@
 var WechatBackupControllers = angular.module('WechatBackupControllers',[]);
 WechatBackupControllers.controller('EntryController',["$scope","$state",function ($scope,$state) {
     $scope.page = "entry page";
-    $scope.dPath = "";
+    $scope.dPath = "/Users/shidanlifuhetian/All/Tdevelop/WeChatData/data20170107/Documents";
+    $scope.wechatUserMD5 = "4ff9910cd14885aa373c45c4b7909ba7";
+    $scope.chatTableName = "Chat_165a100d5e335d624e3dba4d7cd555f9";
+    $scope.audioFolderPath = "";
+
+    $scope.targetPath={
+        rootFolder:"",
+        audioFolder:"",
+        imageFolder:"",
+        videoFolder:""
+    };
+
+
+
     $scope.onFileChange = function (files) {
         console.log(files);
         $scope.sqlFile = files[0].path;
+    };
+    $scope.processAudio = function (localID) {
+        var fs = require('fs');
+        //var data = fs.readFileSync($scope.audioFolderPath+"/"+row.MesLocalID+".mp3");
+        var audioFilePath = $scope.audioFolderPath+localID+".mp3";
+        var audioTag = "<audio></audio>";
+        if(fs.existsSync(audioFilePath))// 若mp3文件存在
+        {
+            audioTag = "<audio src='file://"+audioFilePath+"' controls='controls'></audio>";
+        }else{
+            var command = $scope.audioFolderPath + "converter.sh "+localID + ".aud mp3";
+            var stdOut = require('child_process').execSync( command,{// child_process会调用sh命令，pc会调用cmd.exe命令
+                encoding: "utf8"
+            } );
+            console.log(stdOut);
+            if(stdOut.indexOf("[OK]") > 0)// 存在OK,即转换成功
+            {
+                audioTag = "<audio src='file://"+audioFilePath+"' controls='controls'></audio>";
+            }else {
+                audioTag = "[语音读取出错]";
+            }
+        }
+        return audioTag;
+    }
+    $scope.startGeneration = function (documentsPath, wechatUserMD5, chatTableName) {
+        var fs = require("fs");
+        var fse = require('fs-extra');
+
+        // 0.准备工作
+        $scope.audioFolderPath = documentsPath+"/"+wechatUserMD5 + "/Audio/"+getChatterMd5(chatTableName) + "/";
+        //console.log($scope.audioFolderPath);
+        var sqliteFilePath = documentsPath+"/"+wechatUserMD5+"/DB/MM.sqlite";
+
+        //  1. 建立输出文件夹
+
+        fse.emptyDirSync("output");// 保证output文件夹为空，不为空则清空，不存在则创建
+        fs.mkdirSync("output/audio");
+        fs.mkdirSync("output/image");
+        fs.mkdirSync("output/video");
+        fse.copySync("./framework/data.sqlite","output/data.sqlite");//拷贝数据库
+        $scope.targetPath.rootFolder = require("path").normalize("output");
+        console.log($scope.targetPath);
+        //  2. 拷贝silk解码文件到指定audio目录下
+        var srcPath = './framework/silk-v3-decoder'; //current folder
+        var destPath = $scope.audioFolderPath; //
+        console.log("开始拷贝silk-vs-decoder文件夹");
+        // 拷贝文件夹及其子文件夹
+        fse.copy(srcPath, destPath, function (err) {
+            if (err) return console.error(err);
+            console.log('拷贝silk-vs-decoder成功!')
+        });
+
+        //  3.连接mm.sqlite数据库
+        var sqlite3 = require('sqlite3');
+        // 打开一个sqlite数据库
+        console.log(sqliteFilePath);
+        var db = new sqlite3.Database(sqliteFilePath,sqlite3.OPEN_READONLY,function (error) {
+            if (error){
+                console.log("Database error:",error);
+            }
+        });
+        //  4.新建一个数据库，用来存新格式的数据
+        var newDb = new sqlite3.Database("./output/data.sqlite",sqlite3.OPEN_READWRITE,function (error) {
+            if (error) {
+                console.log("data.sqlite error:", error);
+            }
+            });
+        var sql = "SELECT * FROM "+chatTableName+" order by CreateTime limit 10";
+        //  5.逐条数据库信息获取
+        db.each(sql,
+            function (error,row) {
+            // 回调函数，每获取一个条目，执行一次，第二个参数为当前条目
+                console.log(row);
+                switch(rows[i].Type)
+                {
+                    case 1:// 文字消息
+                        message.content = templateMessage(rows[i]);
+                        break;
+                    case 3:// 图片消息
+                        message.content = $scope.templateImage(rows[i]);
+                        break;
+                    case 34:// 语音消息
+                        message.content = $scope.templateAudio(rows[i]);
+                        break;
+                    case 43:// 视频消息
+                        message.content = $scope.templateImage(rows[i]);
+                        break;
+                    case 62:// 小视频消息
+                        message.content = $scope.templateVideo(rows[i]);
+                        break;
+                    case 47:// 动画表情
+                        message.content = "动画表情";
+                        break;
+                    case 49:// 分享链接
+                        message.content = "分享链接";
+                        break;
+                    case 48:// 位置
+                        message.content = "位置";
+                        break;
+                    case 42:// 名片
+                        message.content = "名片";
+                        break;
+                    case 50:// 语音、视频电话
+                        message.content = "语音、视频电话";
+                        break;
+                    default:
+                        message.content = "未知消息类型：type id:"+rows[i].Type;
+                }
+                newDb.run("INSERT INTO ChatData (MesLocalID,CreateTime,Message,Status,ImgStatus,Type,Des) VALUES (?,?,?,?,?,?,?);",
+                    [row.MesLocalID,row.CreateTime,row.Message,row.Status,row.ImgStatus,row.Type,row.Des]);
+
+
+        },
+            function (error,result) {
+            // complete
+            if(!error){
+                $scope.totalTablesCount = result;
+                console.log("completed total tables Count:",result);
+            }else{
+                console.log("complete error:",error);
+            }
+        });
+        // db.all(sql, function(err, rows) {
+        //     for(var i in rows){
+        //         var time = formatTimeStamp(rows[i].CreateTime)
+        //         //console.log(time);
+        //
+        //         $scope.previewData.push({
+        //             time:time,
+        //             message:rows[i].Message
+        //         })
+        //     }
+        //     //console.log("scope apply,previewData count:",$scope.previewData.length)
+        //
+        //     $scope.$apply();
+        //
+        // });
     };
     $scope.loadDocuments = function (documentsPath) {
         console.log(documentsPath);
