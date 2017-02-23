@@ -1,7 +1,7 @@
 var WechatBackupControllers = angular.module('WechatBackupControllers',[]);
 WechatBackupControllers.controller('EntryController',["$scope","$state",function ($scope,$state) {
     $scope.page = "entry page";
-    $scope.dPath = "/Users/shidanlifuhetian/All/Tdevelop/WeChatData/data20170107/Documents";
+    $scope.dPath = "";
     $scope.onFileChange = function (files) {
         console.log(files);
         $scope.sqlFile = files[0].path;
