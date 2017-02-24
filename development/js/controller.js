@@ -63,6 +63,41 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
 
         return result;
     };
+    $scope.processImage = function (localID,createTime) {
+        //1. 根据localID定位到备份文件夹里的aud文件
+
+        var fs = require('fs');
+        var fse = require('fs-extra');
+        var path = require('path');
+        var result={
+            resourceUrl:"",
+            convertStatus:true,
+            errorMessage:""
+        };
+        //var data = fs.readFileSync($scope.audioFolderPath+"/"+row.MesLocalID+".mp3");
+        //2. 调用子进程来转换为MP3文件,并拷贝到新文件夹下
+        //3. 返回新MP3的相对url地址
+            var command = $scope.documentsPath.audioFolder + "/converter.sh "+localID + ".aud mp3";
+            console.log("command:",command);
+            var stdOut = require('child_process').execSync( command,{// child_process会调用sh命令，pc会调用cmd.exe命令
+                encoding: "utf8"
+            } );
+            console.log(stdOut);
+            if(stdOut.indexOf("[OK]") > 0)// 存在OK,即转换成功
+            {
+                var audioFileOld = $scope.documentsPath.audioFolder+"/"+localID+".mp3";
+                var audioFileNew = path.join($scope.targetPath.audioFolder,formatTimeStamp(createTime)+".mp3");
+                fse.copySync(audioFileOld,audioFileNew);
+                //拷贝至新地址
+                //audioTag = "<audio src='file://"+audioFilePath+"' controls='controls'></audio>";
+                result.resourceUrl = path.join("audio",formatTimeStamp(createTime)+".mp3");
+            }else {
+                result.convertStatus = false;
+                result.errorMessage = "[语音读取出错]";
+            }
+
+        return result;
+    };
     $scope.startGeneration = function (documentsPath, wechatUserMD5, chatTableName) {
         var fs = require("fs");
         var fse = require('fs-extra');
@@ -73,7 +108,6 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
         $scope.documentsPath.audioFolder = path.join($scope.documentsPath.rootFolder,wechatUserMD5,"Audio",getChatterMd5(chatTableName));
         console.log("@@@");
         console.log($scope.documentsPath);
-        //$scope.audioFolderPath = documentsPath+"/"+wechatUserMD5 + "/Audio/"+getChatterMd5(chatTableName) + "/";
         var sqliteFilePath = documentsPath+"/"+wechatUserMD5+"/DB/MM.sqlite";
         $scope.targetPath.rootFolder = path.join(path.dirname(process.mainModule.filename),"output");
         $scope.targetPath.audioFolder = path.join($scope.targetPath.rootFolder,"audio");
@@ -82,20 +116,24 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
         console.log("###");
         console.log($scope.targetPath);
         //  1. 建立输出文件夹
-        var develop = true;
+        var develop = false;
         if (!develop) {// 开发测试，暂时隐去
             fse.emptyDirSync("output");// 保证output文件夹为空，不为空则清空，不存在则创建
             fs.mkdirSync("output/audio");
             fs.mkdirSync("output/image");
             fs.mkdirSync("output/video");
-            fse.copySync("./framework/data.sqlite", "output/data.sqlite");//拷贝数据库
+            try {
+                fse.copySync("./framework/data.sqlite", "output/data.sqlite");//拷贝数据库
+            }catch (error){
+                console.error(error);
+            }
         }
 
         //  2. 拷贝silk解码文件到指定audio目录下
         var srcPath = './framework/silk-v3-decoder'; //current folder
         var destPath = $scope.documentsPath.audioFolder; //
         console.log("开始拷贝silk-vs-decoder文件夹");
-        // 拷贝文件夹及其子文件夹.可能出现的问题：拷贝需要一段时间，如果拷贝没完成
+        // 拷贝文件夹及其子文件夹.
         try {
             fse.copySync(srcPath, destPath);
             console.log('拷贝silk-vs-decoder成功!')
