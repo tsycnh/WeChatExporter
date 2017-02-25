@@ -182,13 +182,6 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
         //console.log($scope.targetPath);
         //  1. 建立输出文件夹
 
-        // fse.emptyDirSync("output");// 保证output文件夹为空，不为空则清空，不存在则创建
-        // fs.mkdirSync("output/audio");
-        // fs.mkdirSync("output/image");
-        // fs.mkdirSync("output/image/thumbnail");
-        // fs.mkdirSync("output/video");
-        // fs.mkdirSync("output/video/thumbnail");
-
         fse.emptyDirSync($scope.targetPath.rootFolder);// 保证output文件夹为空，不为空则清空，不存在则创建
         fs.mkdirSync($scope.targetPath.audioFolder);
         fs.mkdirSync($scope.targetPath.imageFolder);
@@ -234,7 +227,6 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
         db.each(sql,
             function (error,row) {
             // 回调函数，每获取一个条目，执行一次，第二个参数为当前条目
-                //console.log(row);
                 var message = {
                     content:"",
                     type:"",
@@ -294,6 +286,7 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
 
                 message.content = "处理第"+index+"条消息|消息类型："+message.type+"|处理状况："+message.status;
                 console.log(message.content);
+
                 index++;
 
         },
