@@ -103,6 +103,7 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
                 console.error(error);
             }
         }else {
+            result.convertStatus = false;
             result.errorMessage += "[图片原图不存在]";
         }
         result.resourceUrl = path.basename(thumbnailTarget);
@@ -149,6 +150,8 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
             }
         }else {
             result.errorMessage += "[视频不存在]";
+            result.convertStatus = false;
+
         }
         result.resourceUrl = path.basename(thumbnailTarget);
 
@@ -276,7 +279,12 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
                 }
                 newDb.run("INSERT INTO ChatData (MesLocalID,CreateTime,Message,Status,ImgStatus,Type,Des,resourceUrl) VALUES (?,?,?,?,?,?,?,?);",
                     [row.MesLocalID,row.CreateTime,row.Message,row.Status,row.ImgStatus,row.Type,row.Des,result.resourceUrl]);
-                message.status = result.convertStatus == true?"成功":"失败"
+                if(result.convertStatus == true){
+                    message.status = "成功";
+                }else{
+                    message.status = result.errorMessage;
+                }
+                //message.status = result.convertStatus == true?"成功":"失败"
 
                 message.content = "处理第"+index+"条消息|消息类型："+message.type+"|处理状况："+message.status;
                 console.log(message.content);
