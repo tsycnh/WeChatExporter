@@ -607,7 +607,7 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
                 switch(rows[i].Type)
                 {
                     case 1:// 文字消息
-                        message.content = templateMessage(rows[i]);
+                        message.content = $scope.templateMessage(rows[i]);
                         break;
                     case 3:// 图片消息
                         message.content = $scope.templateImage(rows[i]);
@@ -673,20 +673,19 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
     $scope.inputChange = function () {
         console.log("input Change");
     };
-
     $scope.$watch('scrollToBottom',function (newValue,oldValue) {
         $scope.count++;
         console.log("angular detect scroll,count:",$scope.count);
         console.log("new:",newValue," old:",oldValue);
         //$scope.$apply();
     });
-
-
-
+    $scope.templateMessage = function(row) {
+        return row.Message;
+    }
     $scope.templateImage = function (row) {
         var fs = require('fs');
         var data = fs.readFileSync($scope.imgFolderPath+row.MesLocalID+".pic_thum");
-
+        var data = fs.readFileSync($scope.outputPath.imageThumbnailFolder+row.resourceUrl);
         var imgTag = "<img>";
         if(data != undefined) {
             var a = data.toString("base64");
@@ -747,7 +746,6 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
         return videoTag;
     }
 
-
 }]);
 
 // useful functions
@@ -764,9 +762,7 @@ function formatTimeStamp(timeStamp) {
     return y+'-'+add0(m)+'-'+add0(d)+'-'+add0(h)+'-'+add0(mm)+'-'+add0(s);
 }
 
-function templateMessage(row) {
-    return row.Message;
-}
+
 
 // 获取目录路径,返回值包括斜线形如："/abc/bsd/to/"
 function getFolderPath(sqliteFilePath) {
