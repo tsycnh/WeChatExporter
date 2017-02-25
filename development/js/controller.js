@@ -12,7 +12,7 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
         videoFolder:""
     };
     $scope.targetPath={
-        rootFolder:"",
+        rootFolder:"/Users/shidanlifuhetian/Desktop/output",
         audioFolder:"",
         imageFolder:"",
         imageThumbnailFolder:"",
@@ -172,7 +172,7 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
         //console.log("@@@");
         //console.log($scope.documentsPath);
         var sqliteFilePath = documentsPath+"/"+wechatUserMD5+"/DB/MM.sqlite";
-        $scope.targetPath.rootFolder = path.join(path.dirname(process.mainModule.filename),"output");
+        //$scope.targetPath.rootFolder = path.join(path.dirname(process.mainModule.filename),"output");
         $scope.targetPath.audioFolder = path.join($scope.targetPath.rootFolder,"audio");
         $scope.targetPath.imageFolder = path.join($scope.targetPath.rootFolder,"image");
         $scope.targetPath.imageThumbnailFolder = path.join($scope.targetPath.rootFolder,"image","thumbnail");
@@ -182,14 +182,21 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
         //console.log($scope.targetPath);
         //  1. 建立输出文件夹
 
-        fse.emptyDirSync("output");// 保证output文件夹为空，不为空则清空，不存在则创建
-        fs.mkdirSync("output/audio");
-        fs.mkdirSync("output/image");
-        fs.mkdirSync("output/image/thumbnail");
-        fs.mkdirSync("output/video");
-        fs.mkdirSync("output/video/thumbnail");
+        // fse.emptyDirSync("output");// 保证output文件夹为空，不为空则清空，不存在则创建
+        // fs.mkdirSync("output/audio");
+        // fs.mkdirSync("output/image");
+        // fs.mkdirSync("output/image/thumbnail");
+        // fs.mkdirSync("output/video");
+        // fs.mkdirSync("output/video/thumbnail");
+
+        fse.emptyDirSync($scope.targetPath.rootFolder);// 保证output文件夹为空，不为空则清空，不存在则创建
+        fs.mkdirSync($scope.targetPath.audioFolder);
+        fs.mkdirSync($scope.targetPath.imageFolder);
+        fs.mkdirSync($scope.targetPath.imageThumbnailFolder);
+        fs.mkdirSync($scope.targetPath.videoFolder);
+        fs.mkdirSync($scope.targetPath.videoThumbnailFolder);
         try {
-            fse.copySync("./framework/data.sqlite", "output/data.sqlite");//拷贝数据库
+            fse.copySync("./framework/data.sqlite", $scope.targetPath.rootFolder+"/data.sqlite");//拷贝数据库
         }catch (error){
             console.error(error);
         }
@@ -215,8 +222,8 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
                 console.log("Database error:",error);
             }
         });
-        //  4.新建一个数据库，用来存新格式的数据
-        var newDb = new sqlite3.Database("./output/data.sqlite",sqlite3.OPEN_READWRITE,function (error) {
+        //  4.打开刚刚创建的数据库，用来存新格式的数据
+        var newDb = new sqlite3.Database($scope.targetPath.rootFolder+"/data.sqlite",sqlite3.OPEN_READWRITE,function (error) {
             if (error) {
                 console.log("data.sqlite error:", error);
             }

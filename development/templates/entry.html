@@ -4,13 +4,15 @@
         <form class="form-horizontal">
             <div class="form-group">
                 <label>选择 Documents 文件路径</label>
-                <input type="text" class="form-control" ng-model="dPath">
+                <input placeholder="/path/to/Documents" type="text" class="form-control" ng-model="dPath">
                 <p>Documents路径：</p>
                 <p>{{dPath}}</p>
                 <label>用户MD5</label>
                 <input type="text" class="form-control" ng-model="wechatUserMD5">
                 <label>数据表名</label>
                 <input type="text" class="form-control" ng-model="chatTableName">
+                <label>文件输出路径</label>
+                <input placeholder="good" type="text" class="form-control" ng-model="targetPath.rootFolder">
             </div>
             <div class="form-group">
             <button ng-click="startGeneration(dPath,wechatUserMD5,chatTableName)" class="btn btn-block btn-primary">开始生成数据</button>
