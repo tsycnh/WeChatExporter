@@ -14,8 +14,9 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
         rootFolder:"",
         audioFolder:"",
         imageFolder:"",
-        thumbnailFolder:"",
-        videoFolder:""
+        imageThumbnailFolder:"",
+        videoFolder:"",
+        videoThumbnailFolder:""
     };
 
     $scope.onFileChange = function (files) {
@@ -44,11 +45,11 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
         //2. 调用子进程来转换为MP3文件,并拷贝到新文件夹下
         //3. 返回新MP3的相对url地址
             var command = $scope.documentsPath.audioFolder + "/converter.sh "+localID + ".aud mp3";
-            console.log("command:",command);
+            //console.log("command:",command);
             var stdOut = require('child_process').execSync( command,{// child_process会调用sh命令，pc会调用cmd.exe命令
                 encoding: "utf8"
             } );
-            console.log(stdOut);
+            //console.log(stdOut);
             if(stdOut.indexOf("[OK]") > 0)// 存在OK,即转换成功
             {
                 var audioFileOld = $scope.documentsPath.audioFolder+"/"+localID+".mp3";
@@ -70,7 +71,7 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
         //3. 拷贝到新目录下，大图放在image目录下，小图放在image/thumbnail下。图片名相同。
         //4. 数据库里面直接存图片名。
         //5. 读取数据库的时候手动加image和image/thumbnail
-
+        //！！！可能存在的bug，即图片的时间戳相同，目标文件命名的问题
         var fs = require('fs');
         var fse = require('fs-extra');
         var path = require('path');
@@ -81,7 +82,7 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
         };
         var thumbnailOrigin = $scope.documentsPath.imageFolder+"/"+localID+".pic_thum";
         var imageOrigin = $scope.documentsPath.imageFolder+"/"+localID+".pic";
-        var thumbnailTarget = $scope.targetPath.thumbnailFolder+"/"+formatTimeStamp(createTime)+".jpg";
+        var thumbnailTarget = $scope.targetPath.imageThumbnailFolder+"/"+formatTimeStamp(createTime)+".jpg";
         var imageTarget = $scope.targetPath.imageFolder+"/"+formatTimeStamp(createTime)+".jpg";
         if(fs.existsSync(thumbnailOrigin))
         {
@@ -115,6 +116,45 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
 
         return result;
     };
+    $scope.processVideo = function (localID,createTime) {
+        var fs = require('fs');
+        var fse = require('fs-extra');
+        var path = require('path');
+        var result={
+            resourceUrl:"",
+            convertStatus:true,
+            errorMessage:""
+        };
+        var thumbnailOrigin = $scope.documentsPath.videoFolder+"/"+localID+".video_thum";
+        var videoOrigin = $scope.documentsPath.videoFolder+"/"+localID+".mp4";
+        var thumbnailTarget = $scope.targetPath.videoThumbnailFolder+"/"+formatTimeStamp(createTime)+".jpg";
+        var videoTarget = $scope.targetPath.videoFolder+"/"+formatTimeStamp(createTime)+".mp4";
+        if(fs.existsSync(thumbnailOrigin))
+        {
+            try {
+                fse.copySync(thumbnailOrigin, thumbnailTarget);
+            }catch (error){
+                console.error(error);
+            }
+        }else {
+            result.errorMessage = "[视频缩略图不存在]";
+            result.convertStatus = false;
+        }
+        if(fs.existsSync(videoOrigin))
+        {
+            try {
+            fse.copySync(videoOrigin,videoTarget);
+            }catch (error){
+                console.error(error);
+            }
+        }else {
+            result.errorMessage += "[视频不存在]";
+        }
+        result.resourceUrl = path.basename(thumbnailTarget);
+
+
+        return result;
+    };
     $scope.startGeneration = function (documentsPath, wechatUserMD5, chatTableName) {
         var fs = require("fs");
         var fse = require('fs-extra');
@@ -131,8 +171,9 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
         $scope.targetPath.rootFolder = path.join(path.dirname(process.mainModule.filename),"output");
         $scope.targetPath.audioFolder = path.join($scope.targetPath.rootFolder,"audio");
         $scope.targetPath.imageFolder = path.join($scope.targetPath.rootFolder,"image");
-        $scope.targetPath.thumbnailFolder = path.join($scope.targetPath.rootFolder,"image","thumbnail");
+        $scope.targetPath.imageThumbnailFolder = path.join($scope.targetPath.rootFolder,"image","thumbnail");
         $scope.targetPath.videoFolder = path.join($scope.targetPath.rootFolder,"video");
+        $scope.targetPath.videoThumbnailFolder = path.join($scope.targetPath.rootFolder,"video","thumbnail");
         console.log("###");
         console.log($scope.targetPath);
         //  1. 建立输出文件夹
@@ -143,6 +184,7 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
             fs.mkdirSync("output/image");
             fs.mkdirSync("output/image/thumbnail");
             fs.mkdirSync("output/video");
+            fs.mkdirSync("output/video/thumbnail");
             try {
                 fse.copySync("./framework/data.sqlite", "output/data.sqlite");//拷贝数据库
             }catch (error){
@@ -177,51 +219,68 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
                 console.log("data.sqlite error:", error);
             }
             });
-        var sql = "SELECT * FROM "+chatTableName+" order by CreateTime limit 100";
+        var sql = "SELECT * FROM "+chatTableName+" order by CreateTime limit 1000";
+        var index = 1;
         //  5.逐条数据库信息获取
         db.each(sql,
             function (error,row) {
             // 回调函数，每获取一个条目，执行一次，第二个参数为当前条目
-                console.log(row);
+                //console.log(row);
+                var message = {
+                    content:"",
+                    type:"",
+                    status:""
+                };
                 var result = {};
                 switch(row.Type)
                 {
                     case 1:// 文字消息
                         result = $scope.processText();
+                        message.type = "文字消息";
                         break;
                     case 3:// 图片消息
                         result = $scope.processImage(row.MesLocalID,row.CreateTime);
+                        message.type = "图片消息";
                         break;
                     case 34:// 语音消息
                         result = $scope.processAudio(row.MesLocalID,row.CreateTime);
+                        message.type = "语音消息";
                         break;
                     case 43:// 视频消息
-                        //message.content = $scope.templateImage(rows[i]);
-                        break;
                     case 62:// 小视频消息
-                        //message.content = $scope.templateVideo(rows[i]);
+                        result = $scope.processVideo(row.MesLocalID,row.CreateTime);
+                        message.type = "视频消息";
                         break;
                     case 47:// 动画表情
                         //message.content = "动画表情";
+                        message.type = "动画表情";
                         break;
                     case 49:// 分享链接
                         //message.content = "分享链接";
+                        message.type = "分享链接";
                         break;
                     case 48:// 位置
                         //message.content = "位置";
+                        message.type = "位置";
                         break;
                     case 42:// 名片
                         //message.content = "名片";
+                        message.type = "名片";
                         break;
                     case 50:// 语音、视频电话
-                        //message.content = "语音、视频电话";
+                        message.type = "语音、视频电话";
                         break;
                     default:
+                        message.type = "其他类型消息";
                         //message.content = "未知消息类型：type id:"+rows[i].Type;
                 }
                 newDb.run("INSERT INTO ChatData (MesLocalID,CreateTime,Message,Status,ImgStatus,Type,Des,resourceUrl) VALUES (?,?,?,?,?,?,?,?);",
                     [row.MesLocalID,row.CreateTime,row.Message,row.Status,row.ImgStatus,row.Type,row.Des,result.resourceUrl]);
+                message.status = result.convertStatus == true?"成功":"失败"
 
+                message.content = "处理第"+index+"条消息|消息类型："+message.type+"|处理状况："+message.status;
+                console.log(message.content);
+                index++;
 
         },
             function (error,result) {
@@ -233,21 +292,7 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
                 console.log("complete error:",error);
             }
         });
-        // db.all(sql, function(err, rows) {
-        //     for(var i in rows){
-        //         var time = formatTimeStamp(rows[i].CreateTime)
-        //         //console.log(time);
-        //
-        //         $scope.previewData.push({
-        //             time:time,
-        //             message:rows[i].Message
-        //         })
-        //     }
-        //     //console.log("scope apply,previewData count:",$scope.previewData.length)
-        //
-        //     $scope.$apply();
-        //
-        // });
+
     };
     $scope.loadDocuments = function (documentsPath) {
         console.log(documentsPath);
