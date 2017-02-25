@@ -581,7 +581,8 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
     $scope.count = 0;
     $scope.db = {};             // 数据库
     $scope.limitStart = 0;      // 加载起始位置（包含）
-    $scope.limitGap = 50;       // 每次加载limitGap条消息，默认50
+    $scope.limitGap = 500;       // 每次加载limitGap条消息，默认50
+
 
     //检测是否存在音频解码器
     $scope.audioDecoderExist = function () {
@@ -681,11 +682,11 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
     });
     $scope.templateMessage = function(row) {
         return row.Message;
-    }
+    };
     $scope.templateImage = function (row) {
         var fs = require('fs');
-        var data = fs.readFileSync($scope.imgFolderPath+row.MesLocalID+".pic_thum");
-        var data = fs.readFileSync($scope.outputPath.imageThumbnailFolder+row.resourceUrl);
+        var path = require('path');
+        var data = fs.readFileSync(path.join($scope.outputPath.imageThumbnailFolder,row.resourceUrl));
         var imgTag = "<img>";
         if(data != undefined) {
             var a = data.toString("base64");
@@ -695,53 +696,38 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
     };
     $scope.templateAudio = function (row) {
         var fs = require('fs');
+        var path = require('path');
         //var data = fs.readFileSync($scope.audioFolderPath+"/"+row.MesLocalID+".mp3");
-        var audioFilePath = $scope.audioFolderPath+row.MesLocalID+".mp3";
+        var audioFilePath = path.join($scope.outputPath.audioFolder,row.resourceUrl);
+        //console.log(audioFilePath);
         var audioTag = "<audio></audio>";
-        if(fs.existsSync(audioFilePath))// 若wav文件存在
+        if(fs.existsSync(audioFilePath))// 若文件存在
         {
             audioTag = "<audio src='file://"+audioFilePath+"' controls='controls'></audio>";
         }else{
-            var command = $scope.audioFolderPath + "converter.sh "+row.MesLocalID + ".aud mp3";
-            var stdOut = require('child_process').execSync( command,{// child_process会调用sh命令，pc会调用cmd.exe命令
-                encoding: "utf8"
-            } );
-            console.log(stdOut);
-            if(stdOut.indexOf("[OK]") > 0)// 存在OK,即转换成功
-            {
-                audioTag = "<audio src='file://"+audioFilePath+"' controls='controls'></audio>";
-            }else {
-                audioTag = "[语音读取出错]";
-            }
+            audioTag = "[语音读取出错]";
         }
+
         return audioTag;
-    }
+    };
     $scope.templateVideo = function (row) {
-        console.log("load a video: ",$scope.videoFolderPath+row.MesLocalID+".mp4")
         var fs = require('fs');
-        var videoFilePath = $scope.videoFolderPath+row.MesLocalID+".mp4";
+        var path = require('path');
+        var videoFilePath = path.join($scope.outputPath.videoFolder,row.resourceUrl);
         var videoTag = "<video></video>";
         if(fs.existsSync(videoFilePath))// 若文件存在
         {
             videoTag = "<video src='file://"+videoFilePath+"' controls='controls'></video>";
         }else{
-            // var data = fs.readFileSync($scope.videoFolderPath + row.MesLocalID + ".video_thum");
-            // if(data != undefined) {
-            //     var a = data.toString("base64");
-            //     videoTag = "<img src='data:image/jpeg;base64," + a + "'/>";
-            // }
-            // var command = $scope.audioFolderPath + "converter.sh "+row.MesLocalID + ".aud mp3";
-            // var stdOut = require('child_process').execSync( command,{// child_process会调用sh命令，pc会调用cmd.exe命令
-            //     encoding: "utf8"
-            // } );
-            // console.log(stdOut);
-            // if(stdOut.indexOf("[OK]") > 0)// 存在OK,即转换成功
-            // {
-            //     videoTag = "<video src='file://"+videoFilePath+"' controls='controls'></video>";
-            // }else {
-            //     videoTag = "[语音读取出错]";
-            // }
-            videoTag = "【视频不存在】";
+            var videoFileThumbnailPath = path.join($scope.outputPath.videoThumbnailFolder,path.basename(videoFilePath)+".jpg");
+            console.log(videoFileThumbnailPath);
+            var data = fs.readFileSync(videoFileThumbnailPath);
+
+            if(data != undefined) {
+                var a = data.toString("base64");
+                videoTag = "<img src='data:image/jpeg;base64," + a + "'/>";
+            }
+            videoTag += "【视频不存在】";
         }
         return videoTag;
     }
