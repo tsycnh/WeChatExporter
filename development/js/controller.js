@@ -4,6 +4,7 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
     $scope.dPath = "/Users/shidanlifuhetian/All/Tdevelop/WeChatData/data20170107/Documents";
     $scope.wechatUserMD5 = "4ff9910cd14885aa373c45c4b7909ba7";
     $scope.chatTableName = "Chat_165a100d5e335d624e3dba4d7cd555f9";
+    // $scope.outputLimit = 100;
     $scope.documentsPath = {
         rootFolder:"",
         audioFolder:"",
@@ -168,8 +169,8 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
         $scope.documentsPath.audioFolder = path.join($scope.documentsPath.rootFolder,wechatUserMD5,"Audio",getChatterMd5(chatTableName));
         $scope.documentsPath.imageFolder = path.join($scope.documentsPath.rootFolder,wechatUserMD5,"Img",getChatterMd5(chatTableName));
         $scope.documentsPath.videoFolder = path.join($scope.documentsPath.rootFolder,wechatUserMD5,"Video",getChatterMd5(chatTableName));
-        console.log("@@@");
-        console.log($scope.documentsPath);
+        //console.log("@@@");
+        //console.log($scope.documentsPath);
         var sqliteFilePath = documentsPath+"/"+wechatUserMD5+"/DB/MM.sqlite";
         $scope.targetPath.rootFolder = path.join(path.dirname(process.mainModule.filename),"output");
         $scope.targetPath.audioFolder = path.join($scope.targetPath.rootFolder,"audio");
@@ -177,22 +178,20 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
         $scope.targetPath.imageThumbnailFolder = path.join($scope.targetPath.rootFolder,"image","thumbnail");
         $scope.targetPath.videoFolder = path.join($scope.targetPath.rootFolder,"video");
         $scope.targetPath.videoThumbnailFolder = path.join($scope.targetPath.rootFolder,"video","thumbnail");
-        console.log("###");
-        console.log($scope.targetPath);
+        //console.log("###");
+        //console.log($scope.targetPath);
         //  1. 建立输出文件夹
-        var develop = false;
-        if (!develop) {// 开发测试，暂时隐去
-            fse.emptyDirSync("output");// 保证output文件夹为空，不为空则清空，不存在则创建
-            fs.mkdirSync("output/audio");
-            fs.mkdirSync("output/image");
-            fs.mkdirSync("output/image/thumbnail");
-            fs.mkdirSync("output/video");
-            fs.mkdirSync("output/video/thumbnail");
-            try {
-                fse.copySync("./framework/data.sqlite", "output/data.sqlite");//拷贝数据库
-            }catch (error){
-                console.error(error);
-            }
+
+        fse.emptyDirSync("output");// 保证output文件夹为空，不为空则清空，不存在则创建
+        fs.mkdirSync("output/audio");
+        fs.mkdirSync("output/image");
+        fs.mkdirSync("output/image/thumbnail");
+        fs.mkdirSync("output/video");
+        fs.mkdirSync("output/video/thumbnail");
+        try {
+            fse.copySync("./framework/data.sqlite", "output/data.sqlite");//拷贝数据库
+        }catch (error){
+            console.error(error);
         }
 
         //  2. 拷贝silk解码文件到指定audio目录下
@@ -222,7 +221,7 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
                 console.log("data.sqlite error:", error);
             }
             });
-        var sql = "SELECT * FROM "+chatTableName+" order by CreateTime limit 1000";
+        var sql = "SELECT * FROM "+chatTableName+" order by CreateTime";
         var index = 1;
         //  5.逐条数据库信息获取
         db.each(sql,
