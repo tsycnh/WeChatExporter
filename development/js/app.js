@@ -39,7 +39,7 @@ WechatBackup.config(["$stateProvider","$urlRouterProvider",function ($stateProvi
     // 聊天详情页面
     var chatDetailState = {
         name:"chatDetail",
-        url:"/chatDetail/:tableName/:sqliteFilePath",
+        url:"/chatDetail/:outputPath",
         views:{
             '':{
                 templateUrl:"/templates/index.html"

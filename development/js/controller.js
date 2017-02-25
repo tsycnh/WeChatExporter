@@ -1,6 +1,13 @@
 var WechatBackupControllers = angular.module('WechatBackupControllers',[]);
 WechatBackupControllers.controller('EntryController',["$scope","$state",function ($scope,$state) {
     $scope.page = "entry page";
+    $scope.outputPath = "/Users/shidanlifuhetian/Desktop/output";
+    $scope.goToChatDetailPage = function () {
+        $state.go('chatDetail',{outputPath:$scope.outputPath});
+
+    };
+    ///
+
     $scope.dPath = "/Users/shidanlifuhetian/All/Tdevelop/WeChatData/data20170107/Documents";
     $scope.wechatUserMD5 = "4ff9910cd14885aa373c45c4b7909ba7";
     $scope.chatTableName = "Chat_165a100d5e335d624e3dba4d7cd555f9";
@@ -559,14 +566,16 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
 // chatDetail.html页面的controller
 WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$stateParams",function ($scope, $state, $stateParams) {
 
-    $scope.tableName = $stateParams.tableName;
-    $scope.filePath = $stateParams.sqliteFilePath; //sqlite 文件路径
-    $scope.folderPath = "";     // 备份根路径，精确到md5
-    $scope.imgFolderPath = "";  // 图像路径
-    $scope.audioFolderPath = "";// 语音路径
-    $scope.videoFolderPath = "";// 视频路径
-    $scope.meMd5 = "";          // 我的Md5值
-    $scope.chatterMd5 = "";     // 聊天者的Md5值
+    $scope.outputPath={
+        rootFolder:"",
+        sqliteFile:"",
+        audioFolder:"",
+        imageFolder:"",
+        imageThumbnailFolder:"",
+        videoFolder:"",
+        videoThumbnailFolder:""
+    };
+
     $scope.chatData = [];
     $scope.scrollToBottom = -1;
     $scope.count = 0;
@@ -640,46 +649,25 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
     };
     // 构造函数
     $scope.ChatDetailController = function () {
-        //console.log("enter ChatDetailController");
-        // /Users/shidanlifuhetian/All/Tdevelop/微信备份数据库/微信2017年01月07日备份/Documents/4ff9910cd14885aa373c45c4b7909ba7/DB/MM.sqlite
-        // 初始化各种路径
-        $scope.folderPath = getFolderPath($scope.filePath);
-        //console.log($scope.folderPath);
-        $scope.meMd5 = getMyMd5($scope.folderPath);
-        $scope.chatterMd5 = getChatterMd5($scope.tableName);
-        console.log($scope.meMd5);
-        $scope.imgFolderPath = $scope.folderPath + "Img/" + $scope.chatterMd5 + "/";
-        $scope.audioFolderPath = $scope.folderPath + "Audio/" + $scope.chatterMd5 + "/";
-        $scope.videoFolderPath = $scope.folderPath + "Video/" + $scope.chatterMd5 + "/";
+        console.log("enter ChatDetailController");
+
+        var path = require('path');
         var sqlite3 = require('sqlite3');
-        // 拷贝silk-v3-decoder至对应的Audio文件夹
-        // 打开一个sqlite数据库
-        var db = new sqlite3.Database($scope.filePath,sqlite3.OPEN_READONLY,function (error) {
-            if (error){
-                console.log("Database error:",error);
-            }
+
+        $scope.outputPath.rootFolder = $stateParams.outputPath;
+        $scope.outputPath.sqliteFile = path.join($scope.outputPath.rootFolder,"data.sqlite");
+        $scope.outputPath.audioFolder = path.join($scope.outputPath.rootFolder,"audio");
+        $scope.outputPath.imageFolder = path.join($scope.outputPath.rootFolder,"image");
+        $scope.outputPath.imageThumbnailFolder = path.join($scope.outputPath.rootFolder,"image","thumbnail");
+        $scope.outputPath.videoFolder = path.join($scope.outputPath.rootFolder,"video");
+        $scope.outputPath.videoThumbnailFolder = path.join($scope.outputPath.rootFolder,"video","thumbnail");
+        console.log($scope.outputPath);
+        //1.    打开sqlite数据库
+        //2.    按照limit规则，每按一次loadMore载入指定数量的消息
+        $scope.db = new sqlite3.Database($scope.outputPath.sqliteFile,sqlite3.OPEN_READONLY,function (error) {
+            if (error){console.log("Database error:",error);}
         });
-        $scope.db = db;
-
-        if($scope.audioDecoderExist())
-        {
-            $scope.loadMore();// 载入数据库内容
-
-        }else{
-            var fse = require('fs-extra');
-
-            // 拷贝silk-v3-decoder 的内容到目标文件夹内
-            var srcPath = './framework/silk-v3-decoder'; //current folder
-            var destPath = $scope.audioFolderPath; //
-            console.log("开始拷贝silk-vs-decoder文件夹");
-
-            fse.copy(srcPath, destPath, function (err) {
-                if (err) return console.error(err)
-                console.log('拷贝silk-vs-decoder成功!')
-                $scope.loadMore();// 载入数据库内容
-
-            });// copies directory, even if it has subdirectories or files
-        }
+        $scope.loadMore();// 载入数据库内容
     };
     $scope.ChatDetailController();
     $scope.inputChange = function () {
