@@ -686,7 +686,7 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
     $scope.templateImage = function (row) {
         var fs = require('fs');
         var path = require('path');
-        var data = fs.readFileSync(path.join($scope.outputPath.imageThumbnailFolder,row.resourceUrl));
+        var data = fs.readFileSync(path.join($scope.outputPath.imageThumbnailFolder,row.thumbnailName));
         var imgTag = "<img>";
         if(data != undefined) {
             var a = data.toString("base64");
@@ -698,7 +698,7 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
         var fs = require('fs');
         var path = require('path');
         //var data = fs.readFileSync($scope.audioFolderPath+"/"+row.MesLocalID+".mp3");
-        var audioFilePath = path.join($scope.outputPath.audioFolder,row.resourceUrl);
+        var audioFilePath = path.join($scope.outputPath.audioFolder,row.resourceName);
         //console.log(audioFilePath);
         var audioTag = "<audio></audio>";
         if(fs.existsSync(audioFilePath))// 若文件存在
@@ -713,13 +713,13 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
     $scope.templateVideo = function (row) {
         var fs = require('fs');
         var path = require('path');
-        var videoFilePath = path.join($scope.outputPath.videoFolder,row.resourceUrl);
+        var videoFilePath = path.join($scope.outputPath.videoFolder,row.resourceName);
         var videoTag = "<video></video>";
         if(fs.existsSync(videoFilePath))// 若文件存在
         {
             videoTag = "<video src='file://"+videoFilePath+"' controls='controls'></video>";
         }else{
-            var videoFileThumbnailPath = path.join($scope.outputPath.videoThumbnailFolder,path.basename(videoFilePath)+".jpg");
+            var videoFileThumbnailPath = path.join($scope.outputPath.videoThumbnailFolder,row.thumbnailName);
             console.log(videoFileThumbnailPath);
             var data = fs.readFileSync(videoFileThumbnailPath);
 
