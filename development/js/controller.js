@@ -1,16 +1,16 @@
 var WechatBackupControllers = angular.module('WechatBackupControllers',[]);
 WechatBackupControllers.controller('EntryController',["$scope","$state",function ($scope,$state) {
     $scope.page = "entry page";
-    $scope.outputPath = "/Users/shidanlifuhetian/Desktop/output";
+    $scope.outputPath = "/Users/shidanlifuhetian/All/output";
     $scope.goToChatDetailPage = function () {
         $state.go('chatDetail',{outputPath:$scope.outputPath});
 
     };
     ///
 
-    $scope.dPath = "/Users/shidanlifuhetian/All/Tdevelop/WeChatData/data20170107/Documents";
-    $scope.wechatUserMD5 = "4ff9910cd14885aa373c45c4b7909ba7";
-    $scope.chatTableName = "Chat_165a100d5e335d624e3dba4d7cd555f9";
+    // $scope.dPath = "/Users/shidanlifuhetian/All/Tdevelop/WeChatData/data20170107/Documents";
+    // $scope.wechatUserMD5 = "4ff9910cd14885aa373c45c4b7909ba7";
+    // $scope.chatTableName = "Chat_165a100d5e335d624e3dba4d7cd555f9";
     // $scope.outputLimit = 100;
     $scope.documentsPath = {
         rootFolder:"",
@@ -170,7 +170,7 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
         var fs = require("fs");
         var fse = require('fs-extra');
         var path = require("path");
-
+        console.log("enter startGeneration");
         // 0.准备工作 a.设置好文件夹路径
         $scope.documentsPath.rootFolder = path.normalize(documentsPath);
         $scope.documentsPath.audioFolder = path.join($scope.documentsPath.rootFolder,wechatUserMD5,"Audio",getChatterMd5(chatTableName));
@@ -598,7 +598,10 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
     };
     // 加载聊天记录
     $scope.loadMore = function () {
+
         var sql = "SELECT * FROM ChatData order by CreateTime limit "+$scope.limitStart+","+$scope.limitGap;
+        console.log("laodMore sql:");
+        console.log(sql);
         $scope.db.all(sql, function(err, rows) {
             for (var i in rows){
                 var message = {
@@ -623,22 +626,22 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
                         message.content = $scope.templateVideo(rows[i]);
                         break;
                     case 47:// 动画表情
-                        message.content = "动画表情";
+                        message.content = "[动画表情]";
                         break;
                     case 49:// 分享链接
-                        message.content = "分享链接";
+                        message.content = "[分享链接]";
                         break;
                     case 48:// 位置
-                        message.content = "位置";
+                        message.content = "[位置]";
                         break;
                     case 42:// 名片
-                        message.content = "名片";
+                        message.content = "[名片]";
                         break;
                     case 50:// 语音、视频电话
-                        message.content = "语音、视频电话";
+                        message.content = "[语音、视频电话]";
                         break;
                     default:
-                        message.content = "未知消息类型：type id:"+rows[i].Type;
+                        message.content = "[未知消息类型：type id:"+rows[i].Type+"]";
                 }
                 $scope.chatData.push(message);
             }
@@ -686,7 +689,7 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
     $scope.templateImage = function (row) {
         var fs = require('fs');
         var path = require('path');
-        var data = fs.readFileSync(path.join($scope.outputPath.imageThumbnailFolder,row.thumbnailName));
+        var data = fs.readFileSync(path.join($scope.outputPath.imageThumbnailFolder,row.resourceUrl));
         var imgTag = "<img>";
         if(data != undefined) {
             var a = data.toString("base64");
