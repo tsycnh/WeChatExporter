@@ -602,7 +602,8 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
     // 加载聊天记录
     $scope.loadMore = function () {
 
-        var sql = "SELECT * FROM ChatData order by CreateTime limit "+$scope.limitStart+","+$scope.limitGap;
+        //var sql = "SELECT * FROM ChatData order by CreateTime limit "+$scope.limitStart+","+$scope.limitGap;
+        var sql = "SELECT * FROM ChatData order by CreateTime";
         console.log("laodMore sql:");
         console.log(sql);
         $scope.db.all(sql, function(err, rows) {

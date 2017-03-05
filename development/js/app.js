@@ -28,9 +28,9 @@ WechatBackup.config(["$stateProvider","$urlRouterProvider",function ($stateProvi
             '':{
                 templateUrl:"/templates/index.html"
             },
-            'topbar@chatList':{
-                templateUrl:"/templates/topbar.html"
-            },
+            // 'topbar@chatList':{
+            //     templateUrl:"/templates/topbar.html"
+            // },
             'main@chatList':{
                 templateUrl:"/templates/chatList.html"
             }
@@ -44,9 +44,9 @@ WechatBackup.config(["$stateProvider","$urlRouterProvider",function ($stateProvi
             '':{
                 templateUrl:"/templates/index.html"
             },
-            'topbar@chatDetail':{
-                templateUrl:"/templates/topbar.html"
-            },
+            // 'topbar@chatDetail':{
+            //     templateUrl:"/templates/topbar.html"
+            // },
             'main@chatDetail':{
                 templateUrl:"/templates/chatDetail.html"
             }
