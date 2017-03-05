@@ -583,6 +583,9 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
     $scope.limitStart = 0;      // 加载起始位置（包含）
     $scope.limitGap = 500;       // 每次加载limitGap条消息，默认50
 
+    $scope.lastTimeStamp = 0;
+    $scope.currentTimeStamp = 0;
+
 
     //检测是否存在音频解码器
     $scope.audioDecoderExist = function () {
@@ -606,8 +609,15 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
             for (var i in rows){
                 var message = {
                     owner:rows[i].Des,
-                    content:""
+                    content:"",
+                    time:""
                 };
+                $scope.currentTimeStamp = rows[i].CreateTime;
+                if ($scope.currentTimeStamp - $scope.lastTimeStamp > 60*5)
+                {
+                    message.time = formatTimeStamp2($scope.currentTimeStamp);
+                }
+                $scope.lastTimeStamp = $scope.currentTimeStamp;
                 switch(rows[i].Type)
                 {
                     case 1:// 文字消息
@@ -749,6 +759,16 @@ function formatTimeStamp(timeStamp) {
     var mm = time.getMinutes();
     var s = time.getSeconds();
     return y+'-'+add0(m)+'-'+add0(d)+'-'+add0(h)+'-'+add0(mm)+'-'+add0(s);
+}
+function formatTimeStamp2(timeStamp) {
+    var time = new Date(timeStamp*1000);
+    var y = time.getFullYear();
+    var m = time.getMonth()+1;
+    var d = time.getDate();
+    var h = time.getHours();
+    var mm = time.getMinutes();
+    var s = time.getSeconds();
+    return y+'-'+add0(m)+'-'+add0(d)+' '+add0(h)+':'+add0(mm)+':'+add0(s);
 }
 
 
