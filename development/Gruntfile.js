@@ -114,7 +114,8 @@ module.exports = function(grunt){
             }
         },
         usemin: {
-            html: '../build/index.html'
+            html: '../build/index.html',
+            singleHtml:'../distHtml/index.html'
         },
         shell: {
             makeDir: {
@@ -125,6 +126,16 @@ module.exports = function(grunt){
             },
             dirListing: {
                 command: 'ls'
+            }
+        },
+        cssmin:{
+            target: {
+                files: {
+                    '../distHtml/resources/style.min.css': [
+                        './framework/bootstrap-3.3.7/css/bootstrap.min.css',
+                        './framework/bootstrap-3.3.7/css/bootstrap-theme.min.css',
+                        './css/style.css']
+                }
             }
         }
 
@@ -139,6 +150,7 @@ module.exports = function(grunt){
     grunt.loadNpmTasks('grunt-contrib-concat');
     grunt.loadNpmTasks('grunt-usemin');
     grunt.loadNpmTasks('grunt-shell');
+    grunt.loadNpmTasks('grunt-contrib-cssmin');
 
 
     //grunt.registerTask("default",["watch"]);
@@ -164,5 +176,10 @@ module.exports = function(grunt){
         'usemin',
         'buildWithNwb',
         'copy:sqlite3'
+    ]);
+    grunt.registerTask('singleHtml',[
+        'useminPrepare',
+        "cssmin:target",
+        'usemin:singleHtml'
     ]);
 };
