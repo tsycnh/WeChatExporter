@@ -4,14 +4,8 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
     $scope.outputPath = "/Users/shidanlifuhetian/All/output";
     $scope.goToChatDetailPage = function () {
         $state.go('chatDetail',{outputPath:$scope.outputPath});
-
     };
-    ///
 
-    // $scope.dPath = "/Users/shidanlifuhetian/All/Tdevelop/WeChatData/data20170107/Documents";
-    // $scope.wechatUserMD5 = "4ff9910cd14885aa373c45c4b7909ba7";
-    // $scope.chatTableName = "Chat_165a100d5e335d624e3dba4d7cd555f9";
-    // $scope.outputLimit = 100;
     $scope.documentsPath = {
         rootFolder:"",
         audioFolder:"",
@@ -577,6 +571,7 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
     };
 
     $scope.chatData = [];
+    $scope.qqEmoji = {};
     $scope.scrollToBottom = -1;
     $scope.count = 0;
     $scope.db = {};             // 数据库
@@ -585,7 +580,6 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
 
     $scope.lastTimeStamp = 0;
     $scope.currentTimeStamp = 0;
-
 
     //检测是否存在音频解码器
     $scope.audioDecoderExist = function () {
@@ -668,7 +662,10 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
 
         var path = require('path');
         var sqlite3 = require('sqlite3');
-
+        var fse = require('fs-extra')
+        var obj = fse.readJsonSync('./resources/qqemoji.json');
+        console.log("read json");
+        console.log(obj);
         $scope.outputPath.rootFolder = $stateParams.outputPath;
         $scope.outputPath.sqliteFile = path.join($scope.outputPath.rootFolder,"data.sqlite");
         $scope.outputPath.audioFolder = path.join($scope.outputPath.rootFolder,"audio");
@@ -695,6 +692,9 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
         //$scope.$apply();
     });
     $scope.templateMessage = function(row) {
+        if(row.Message == '[微笑]'){
+            return imageToBase64("./imgs/face/0.png");
+        }
         return row.Message;
     };
     $scope.templateImage = function (row) {
@@ -772,8 +772,6 @@ function formatTimeStamp2(timeStamp) {
     return y+'-'+add0(m)+'-'+add0(d)+' '+add0(h)+':'+add0(mm)+':'+add0(s);
 }
 
-
-
 // 获取目录路径,返回值包括斜线形如："/abc/bsd/to/"
 function getFolderPath(sqliteFilePath) {
     console.log(sqliteFilePath);
@@ -792,4 +790,16 @@ function getChatterMd5(tableName) {
     var sep = tableName.split("_");
     return sep.pop();
 
+}
+
+function imageToBase64(imgFile) {
+    var fs = require('fs');
+    var path = require('path');
+    var data = fs.readFileSync(imgFile);
+    var imgTag = "<img>";
+    if(data != undefined) {
+        var a = data.toString("base64");
+        imgTag = "<img src='data:image/jpeg;base64," + a + "'/>";
+    }
+    return imgTag;
 }
