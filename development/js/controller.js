@@ -1,7 +1,7 @@
 var WechatBackupControllers = angular.module('WechatBackupControllers',[]);
 WechatBackupControllers.controller('EntryController',["$scope","$state",function ($scope,$state) {
     $scope.page = "entry page";
-    $scope.outputPath = "/Users/shidanlifuhetian/All/output";
+    $scope.outputPath = "/Users/shidanlifuhetian/Desktop/output";
     $scope.goToChatDetailPage = function () {
         $state.go('chatDetail',{outputPath:$scope.outputPath});
     };
@@ -597,7 +597,7 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
     $scope.loadMore = function () {
 
         //var sql = "SELECT * FROM ChatData order by CreateTime limit "+$scope.limitStart+","+$scope.limitGap;
-        var sql = "SELECT * FROM ChatData order by CreateTime";
+        var sql = "SELECT * FROM ChatData order by CreateTime limit 1000";
         console.log("laodMore sql:");
         console.log(sql);
         $scope.db.all(sql, function(err, rows) {
@@ -625,7 +625,7 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
                         message.content = $scope.templateAudio(rows[i]);
                         break;
                     case 43:// 视频消息
-                        message.content = $scope.templateImage(rows[i]);
+                        message.content = $scope.templateVideo(rows[i]);
                         break;
                     case 62:// 小视频消息
                         message.content = $scope.templateVideo(rows[i]);
@@ -700,11 +700,16 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
     $scope.templateImage = function (row) {
         var fs = require('fs');
         var path = require('path');
-        var data = fs.readFileSync(path.join($scope.outputPath.imageThumbnailFolder,row.resourceUrl));
-        var imgTag = "<img>";
-        if(data != undefined) {
-            var a = data.toString("base64");
-            imgTag = "<img src='data:image/jpeg;base64," + a + "'/>";
+        var imgTag = ""
+        if (fs.existsSync(path.join($scope.outputPath.imageThumbnailFolder,row.thumbnailName))){
+            var data = fs.readFileSync(path.join($scope.outputPath.imageThumbnailFolder, row.thumbnailName));
+            imgTag = "<img>";
+            if (data != undefined) {
+                var a = data.toString("base64");
+                imgTag = "<img src='data:image/jpeg;base64," + a + "'/>";
+            }
+        }else {
+            imgTag="[图片不存在]";
         }
         return imgTag;
     };
@@ -747,59 +752,3 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
     }
 
 }]);
-
-// useful functions
-function add0(m){return m<10?'0'+m:m }
-
-function formatTimeStamp(timeStamp) {
-    var time = new Date(timeStamp*1000);
-    var y = time.getFullYear();
-    var m = time.getMonth()+1;
-    var d = time.getDate();
-    var h = time.getHours();
-    var mm = time.getMinutes();
-    var s = time.getSeconds();
-    return y+'-'+add0(m)+'-'+add0(d)+'-'+add0(h)+'-'+add0(mm)+'-'+add0(s);
-}
-function formatTimeStamp2(timeStamp) {
-    var time = new Date(timeStamp*1000);
-    var y = time.getFullYear();
-    var m = time.getMonth()+1;
-    var d = time.getDate();
-    var h = time.getHours();
-    var mm = time.getMinutes();
-    var s = time.getSeconds();
-    return y+'-'+add0(m)+'-'+add0(d)+' '+add0(h)+':'+add0(mm)+':'+add0(s);
-}
-
-// 获取目录路径,返回值包括斜线形如："/abc/bsd/to/"
-function getFolderPath(sqliteFilePath) {
-    console.log(sqliteFilePath);
-    var sep = sqliteFilePath.split("/");
-    sep.pop();
-    sep.pop();
-    var folderPath = sep.join("/");
-    return folderPath+="/";
-}
-function getMyMd5(folderPath) {
-    var sep = folderPath.split("/");
-    sep.pop();
-    return sep.pop();
-}
-function getChatterMd5(tableName) {
-    var sep = tableName.split("_");
-    return sep.pop();
-
-}
-
-function imageToBase64(imgFile) {
-    var fs = require('fs');
-    var path = require('path');
-    var data = fs.readFileSync(imgFile);
-    var imgTag = "<img>";
-    if(data != undefined) {
-        var a = data.toString("base64");
-        imgTag = "<img src='data:image/jpeg;base64," + a + "'/>";
-    }
-    return imgTag;
-}
