@@ -177,6 +177,7 @@ module.exports = function(grunt){
         'buildWithNwb',
         'copy:sqlite3'
     ]);
+    // 该任务用来生成单个页面，导出html查看聊天记录
     grunt.registerTask('singleHtml',[
         'useminPrepare',
         "cssmin:target",

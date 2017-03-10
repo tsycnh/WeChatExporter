@@ -558,7 +558,7 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
     }
 }]);
 // chatDetail.html页面的controller
-WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$stateParams",function ($scope, $state, $stateParams) {
+WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","$state", "$stateParams",function ($scope,$timeout, $state, $stateParams) {
 
     $scope.outputPath={
         rootFolder:"",
@@ -571,16 +571,21 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
     };
 
     $scope.chatData = [];
+    $scope.pageLink = [];
     $scope.qqEmoji = {};
     $scope.scrollToBottom = -1;
     $scope.count = 0;
     $scope.db = {};             // 数据库
     $scope.limitStart = 0;      // 加载起始位置（包含）
-    $scope.limitGap = 500;       // 每次加载limitGap条消息，默认50
+    $scope.limitGap = 1000;       // 每次加载limitGap条消息，默认50,即每页显示多少条信息
 
-    $scope.lastTimeStamp = 0;
-    $scope.currentTimeStamp = 0;
+    $scope.lastTimeStamp = 0;       // 前一条消息的时间戳
+    $scope.currentTimeStamp = 0;    // 当前一条消息的时间戳
 
+    $scope.totalMessageCount = 0;
+    $scope.totalPageCount = 0;
+
+    $scope.currentPage = -1;
     //检测是否存在音频解码器
     $scope.audioDecoderExist = function () {
         var fs = require('fs');
@@ -595,10 +600,9 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
     };
     // 加载聊天记录
     $scope.loadMore = function () {
-
-        //var sql = "SELECT * FROM ChatData order by CreateTime limit "+$scope.limitStart+","+$scope.limitGap;
-        var sql = "SELECT * FROM ChatData order by CreateTime limit 1000";
-        console.log("laodMore sql:");
+        var sql = "SELECT * FROM ChatData order by CreateTime limit "+$scope.limitStart+","+$scope.limitGap;
+        //var sql = "SELECT * FROM ChatData order by CreateTime limit 1000";
+        console.log("loadMore sql:");
         console.log(sql);
         $scope.db.all(sql, function(err, rows) {
             for (var i in rows){
@@ -654,6 +658,87 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
             //console.log("scope apply,chatData:",$scope.chatData);
             $scope.$apply();
             $scope.limitStart += $scope.limitGap;
+            console.log("load More done");
+            $scope.saveRawHtml();
+        });
+
+    };
+    $scope.refreshPageLink = function () {
+        // 9 in total
+        $scope.pageLink = [];
+        for(var i = - 4;i<=4;i++) {
+            if($scope.currentPage+i > 0 && $scope.currentPage+i<=$scope.totalPageCount) {
+                $scope.pageLink.push($scope.currentPage + i);
+            }
+        }
+    };
+    $scope.goToPage = function (pageIndex) {
+        $scope.chatData = [];// 清空聊天数据
+
+        $scope.currentPage = pageIndex;
+        $scope.limitStart = (pageIndex - 1)*$scope.limitGap;
+        var sql = "SELECT * FROM ChatData order by CreateTime limit "+$scope.limitStart+","+$scope.limitGap;
+        //var sql = "SELECT * FROM ChatData order by CreateTime limit 1000";
+        $timeout(function(){
+            $scope.refreshPageLink();
+        });
+        console.log("loadMore sql:");
+        console.log(sql);
+        $scope.db.all(sql, function(err, rows) {
+            for (var i in rows){
+                var message = {
+                    owner:rows[i].Des,
+                    content:"",
+                    time:""
+                };
+                $scope.currentTimeStamp = rows[i].CreateTime;
+                if ($scope.currentTimeStamp - $scope.lastTimeStamp > 60*5)
+                {
+                    message.time = formatTimeStamp2($scope.currentTimeStamp);
+                }
+                $scope.lastTimeStamp = $scope.currentTimeStamp;
+                switch(rows[i].Type)
+                {
+                    case 1:// 文字消息
+                        message.content = $scope.templateMessage(rows[i]);
+                        break;
+                    case 3:// 图片消息
+                        message.content = $scope.templateImage(rows[i]);
+                        break;
+                    case 34:// 语音消息
+                        message.content = $scope.templateAudio(rows[i]);
+                        break;
+                    case 43:// 视频消息
+                        message.content = $scope.templateVideo(rows[i]);
+                        break;
+                    case 62:// 小视频消息
+                        message.content = $scope.templateVideo(rows[i]);
+                        break;
+                    case 47:// 动画表情
+                        message.content = "[动画表情]";
+                        break;
+                    case 49:// 分享链接
+                        message.content = "[分享链接]";
+                        break;
+                    case 48:// 位置
+                        message.content = "[位置]";
+                        break;
+                    case 42:// 名片
+                        message.content = "[名片]";
+                        break;
+                    case 50:// 语音、视频电话
+                        message.content = "[语音、视频电话]";
+                        break;
+                    default:
+                        message.content = "[未知消息类型：type id:"+rows[i].Type+"]";
+                }
+                $scope.chatData.push(message);
+            }
+            //$scope.chatData = rows;
+            //console.log("scope apply,chatData:",$scope.chatData);
+            $scope.$apply();
+            console.log("load More done");
+            $scope.saveRawHtml();
         });
     };
     // 构造函数
@@ -674,14 +759,26 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
         $scope.outputPath.videoFolder = path.join($scope.outputPath.rootFolder,"video");
         $scope.outputPath.videoThumbnailFolder = path.join($scope.outputPath.rootFolder,"video","thumbnail");
         console.log($scope.outputPath);
-        //1.    打开sqlite数据库
-        //2.    按照limit规则，每按一次loadMore载入指定数量的消息
+
+        //- 打开sqlite数据库
         $scope.db = new sqlite3.Database($scope.outputPath.sqliteFile,sqlite3.OPEN_READONLY,function (error) {
             if (error){console.log("Database error:",error);}
         });
-        $scope.loadMore();// 载入数据库内容
+        //- 计算一共有多少页
+        var sqlite = require('sqlite-sync'); //requiring
+        sqlite.connect($scope.outputPath.sqliteFile);
+        $scope.totalMessageCount = sqlite.run("SELECT count(*) as count from ChatData")[0].count;
+        $scope.totalPageCount = Math.ceil($scope.totalMessageCount/$scope.limitGap);
+        sqlite.close();
+
+        $scope.currentPage = 1;
+        //- 按照limit规则，每按一次loadMore载入指定数量的消息
+        //$scope.loadMore();// 载入数据库内容
+        $scope.goToPage($scope.currentPage);
     };
     $scope.ChatDetailController();
+
+
     $scope.inputChange = function () {
         console.log("input Change");
     };
@@ -691,6 +788,11 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
         console.log("new:",newValue," old:",oldValue);
         //$scope.$apply();
     });
+    $scope.saveRawHtml = function () {
+        var fs = require('fs');
+        var markup = document.documentElement.innerHTML;
+        fs.writeFileSync("../distHtml/index_"+$scope.currentPage+".html",markup);
+    };
     $scope.templateMessage = function(row) {
         if(row.Message == '[微笑]'){
             return imageToBase64("./imgs/face/0.png");
@@ -746,7 +848,7 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
                 var a = data.toString("base64");
                 videoTag = "<img src='data:image/jpeg;base64," + a + "'/>";
             }
-            videoTag += "【视频不存在】";
+            videoTag += "<p>【视频不存在】";
         }
         return videoTag;
     }

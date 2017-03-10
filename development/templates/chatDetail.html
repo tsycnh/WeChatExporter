@@ -1,5 +1,26 @@
 <div id="chat-window" class="row zs-chat-window" ng-controller="ChatDetailController">
-    <!--<input id="zs-scroll-input" ng-change="inputChange()" ng-model="scrollToBottom">scrollToBottom:{{scrollToBottom}}-->
+    <div class="row">
+        <div class="col-md-4 col-sm-10 col-sm-offset-1 col-md-offset-4">
+            <nav class="text-center" aria-label="Page navigation">
+                <ul class="pagination">
+                    <li><a ng-click="goToPage(1)">首页</a></li>
+                    <li ng-class="{'hidden':currentPage == 1}">
+                        <a ng-click="goToPage(currentPage - 1)">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li ng-repeat="(key,pageIndex) in pageLink" ng-class="{'active':pageIndex == currentPage}"><a ng-click="goToPage(pageIndex)">{{pageIndex}}</a></li>
+                    <li ng-class="{'hidden':currentPage == totalPageCount}">
+                        <a ng-click="goToPage(currentPage + 1)">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    <li><a ng-click="goToPage(totalPageCount)">尾页</a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+
     <div class="row zs-message-wrapper" ng-repeat="(key,message) in chatData">
         <div class="row">
             <p class="zs-message-time" ng-show="{{message.time == ''?false:true }}" >{{message.time}}</p>
@@ -17,6 +38,28 @@
                     <img ng-show="{{message.owner == 0?'true':'false'}}" width="50" height="50" src="resources/me.jpg" alt="">
                 </div>
             </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-4 col-sm-10 col-sm-offset-1 col-md-offset-4">
+            <nav class="text-center" aria-label="Page navigation">
+                <ul class="pagination">
+                    <li><a ng-click="goToPage(1)">首页</a></li>
+                    <li ng-class="{'hidden':currentPage == 1}">
+                        <a ng-click="goToPage(currentPage - 1)">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    <li ng-repeat="(key,pageIndex) in pageLink" ng-class="{'active':pageIndex == currentPage}"><a ng-click="goToPage(pageIndex)">{{pageIndex}}</a></li>
+                    <li ng-class="{'hidden':currentPage == totalPageCount}">
+                        <a ng-click="goToPage(currentPage + 1)">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                    <li><a ng-click="goToPage(totalPageCount)">尾页</a></li>
+                </ul>
+            </nav>
         </div>
     </div>
 </div>

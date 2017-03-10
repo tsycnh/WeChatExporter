@@ -64,6 +64,12 @@ li{
 .zs-message-content-other{
     background-color: #ffffff;
 }
+.zs-message-content img{
+    max-width: 120px;
+}
+.zs-message-content video{
+    max-width: 240px;
+}
 /*#chat-window{*/
     /*height:700px; overflow:scroll;*/
 /*}*/
