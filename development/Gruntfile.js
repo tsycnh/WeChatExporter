@@ -115,7 +115,7 @@ module.exports = function(grunt){
         },
         usemin: {
             html: '../build/index.html',
-            singleHtml:'../distHtml/index.html'
+            singleHtml:'../distHtml/index_*.html'
         },
         shell: {
             makeDir: {
