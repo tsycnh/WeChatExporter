@@ -6,7 +6,6 @@ module.exports = function(grunt){
     //    具体任务
         copy:{
             main:{
-
                 files:[
                     // 拷贝除了imgs文件夹，除了icon-test文件夹
                     // /** 表示除了文件夹及其内部的所有东西
@@ -23,6 +22,12 @@ module.exports = function(grunt){
                 src:"node-webkit-v0.19.3-darwin-x64/**",
                 dest:"../小美微信备份Release/小美微信备份.app/Contents/Resources/app.nw/node_modules/sqlite3/lib/binding/"
 
+            },
+            singleHtml:{
+                expand: true,
+                cwd:"resources",
+                src:"**",
+                dest:"../distHtml/resources/"
             }
         },
         clean:{
@@ -134,7 +139,9 @@ module.exports = function(grunt){
                     '../distHtml/resources/style.min.css': [
                         './framework/bootstrap-3.3.7/css/bootstrap.min.css',
                         './framework/bootstrap-3.3.7/css/bootstrap-theme.min.css',
-                        './css/style.css']
+                        './css/style.css',
+                        './css/qqemoji.css'
+                    ]
                 }
             }
         }
@@ -180,6 +187,7 @@ module.exports = function(grunt){
     // 该任务用来生成单个页面，导出html查看聊天记录
     grunt.registerTask('singleHtml',[
         'useminPrepare',
+        "copy:singleHtml",
         "cssmin:target",
         'usemin:singleHtml'
     ]);

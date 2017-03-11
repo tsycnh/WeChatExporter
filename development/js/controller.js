@@ -2,8 +2,9 @@ var WechatBackupControllers = angular.module('WechatBackupControllers',[]);
 WechatBackupControllers.controller('EntryController',["$scope","$state",function ($scope,$state) {
     $scope.page = "entry page";
     $scope.outputPath = "/Users/shidanlifuhetian/Desktop/output";
+    $scope.generateHtml = false;
     $scope.goToChatDetailPage = function () {
-        $state.go('chatDetail',{outputPath:$scope.outputPath});
+        $state.go('chatDetail',{outputPath:$scope.outputPath,generateHtml:$scope.generateHtml});
     };
 
     $scope.documentsPath = {
