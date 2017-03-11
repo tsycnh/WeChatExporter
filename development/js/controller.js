@@ -748,9 +748,8 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
         var path = require('path');
         var sqlite3 = require('sqlite3');
         var fse = require('fs-extra')
-        var obj = fse.readJsonSync('./resources/qqemoji.json');
-        console.log("read json");
-        console.log(obj);
+        $scope.qqEmoji = fse.readJsonSync('./resources/qqemoji.json');
+
         $scope.outputPath.rootFolder = $stateParams.outputPath;
         $scope.outputPath.sqliteFile = path.join($scope.outputPath.rootFolder,"data.sqlite");
         $scope.outputPath.audioFolder = path.join($scope.outputPath.rootFolder,"audio");
@@ -794,10 +793,7 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
         fs.writeFileSync("../distHtml/index_"+$scope.currentPage+".html",markup);
     };
     $scope.templateMessage = function(row) {
-        if(row.Message == '[微笑]'){
-            return imageToBase64("./imgs/face/0.png");
-        }
-        return row.Message;
+        return $scope.messageAddQQemoji(row.Message);
     };
     $scope.templateImage = function (row) {
         var fs = require('fs');
@@ -841,7 +837,7 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
             videoTag = "<video src='file://"+videoFilePath+"' controls='controls'></video>";
         }else{
             var videoFileThumbnailPath = path.join($scope.outputPath.videoThumbnailFolder,row.thumbnailName);
-            console.log(videoFileThumbnailPath);
+            //console.log(videoFileThumbnailPath);
             var data = fs.readFileSync(videoFileThumbnailPath);
 
             if(data != undefined) {
@@ -851,6 +847,39 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
             videoTag += "<p>【视频不存在】";
         }
         return videoTag;
-    }
+    };
 
+    $scope.messageAddQQemoji = function (message) {
+        var pattern = /\[[^\[\]]*]/g;
+        var allMatch = [];
+        while ((match = pattern.exec(message)) != null) {
+            allMatch.push(
+                {
+                    content:match[0],
+                    index:match.index,
+                    length:match[0].length,
+                    imgTag:""
+                }
+            )
+        }
+        for (var i in allMatch)
+        {
+            allMatch[i].imgTag = $scope.QQemojiToImgTag(allMatch[i].content);
+            if(allMatch[i].imgTag == allMatch[i].content)
+            {
+                console.log("未能解析的qqemoji: ",allMatch[i].content);
+            }
+            message = message.replace(allMatch[i].content,allMatch[i].imgTag);
+        }
+        return message;
+    };
+    $scope.QQemojiToImgTag = function (str) {
+        var emojiIndex = $scope.qqEmoji[str];
+        if (emojiIndex >= 0)
+        {
+            return "<img class='qqemoji qqemoji"+emojiIndex+"' src='data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=='>";
+        }else {
+            return str;
+        }
+    }
 }]);

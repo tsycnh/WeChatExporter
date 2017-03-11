@@ -1,0 +1,438 @@
+.qqemoji {
+    background: url(../imgs/qqemoji.png) 0 0 no-repeat;
+    width: 20px;
+    height: 20px;
+    display: inline;
+    display: -moz-inline-stack;
+    display: inline-block;
+    vertical-align: top;
+    background-size: 374px 174px
+}
+/*  15个一行
+0~14 第一行
+15~29 第二行
+30~44 第三行
+45~59 第四行
+60~74 第五行
+75~89 第六行
+90~104 第七行
+*/
+.qqemoji0 {
+    background-position: -2px -2px
+}
+
+.qqemoji1 {
+    background-position: -27px -2px
+}
+
+.qqemoji2 {
+    background-position: -52px -2px
+}
+
+.qqemoji3 {
+    background-position: -77px -2px
+}
+
+.qqemoji4 {
+    background-position: -102px -2px
+}
+
+.qqemoji5 {
+    background-position: -127px -2px
+}
+
+.qqemoji6 {
+    background-position: -152px -2px
+}
+
+.qqemoji7 {
+    background-position: -177px -2px
+}
+
+.qqemoji8 {
+    background-position: -202px -2px
+}
+
+.qqemoji9 {
+    background-position: -227px -2px
+}
+
+.qqemoji10 {
+    background-position: -252px -2px
+}
+
+.qqemoji11 {
+    background-position: -277px -2px
+}
+
+.qqemoji12 {
+    background-position: -302px -2px
+}
+
+.qqemoji13 {
+    background-position: -327px -2px
+}
+
+.qqemoji14 {
+    background-position: -352px -2px
+}
+
+.qqemoji15 {
+    background-position: -2px -27px
+}
+
+.qqemoji16 {
+    background-position: -27px -27px
+}
+
+.qqemoji17 {
+    background-position: -52px -27px
+}
+
+.qqemoji18 {
+    background-position: -77px -27px
+}
+
+.qqemoji19 {
+    background-position: -102px -27px
+}
+
+.qqemoji20 {
+    background-position: -127px -27px
+}
+
+.qqemoji21 {
+    background-position: -152px -27px
+}
+
+.qqemoji22 {
+    background-position: -177px -27px
+}
+
+.qqemoji23 {
+    background-position: -202px -27px
+}
+
+.qqemoji24 {
+    background-position: -227px -27px
+}
+
+.qqemoji25 {
+    background-position: -252px -27px
+}
+
+.qqemoji26 {
+    background-position: -277px -27px
+}
+
+.qqemoji27 {
+    background-position: -302px -27px
+}
+
+.qqemoji28 {
+    background-position: -327px -27px
+}
+
+.qqemoji29 {
+    background-position: -352px -27px
+}
+
+.qqemoji30 {
+    background-position: -2px -52px
+}
+
+.qqemoji31 {
+    background-position: -27px -52px
+}
+
+.qqemoji32 {
+    background-position: -52px -52px
+}
+
+.qqemoji33 {
+    background-position: -77px -52px
+}
+
+.qqemoji34 {
+    background-position: -102px -52px
+}
+
+.qqemoji35 {
+    background-position: -127px -52px
+}
+
+.qqemoji36 {
+    background-position: -152px -52px
+}
+
+.qqemoji37 {
+    background-position: -177px -52px
+}
+
+.qqemoji38 {
+    background-position: -202px -52px
+}
+
+.qqemoji39 {
+    background-position: -227px -52px
+}
+
+.qqemoji40 {
+    background-position: -252px -52px
+}
+
+.qqemoji41 {
+    background-position: -277px -52px
+}
+
+.qqemoji42 {
+    background-position: -302px -52px
+}
+
+.qqemoji43 {
+    background-position: -327px -52px
+}
+
+.qqemoji44 {
+    background-position: -352px -52px
+}
+
+.qqemoji45 {
+    background-position: -2px -77px
+}
+
+.qqemoji46 {
+    background-position: -27px -77px
+}
+
+.qqemoji47 {
+    background-position: -52px -77px
+}
+
+.qqemoji48 {
+    background-position: -77px -77px
+}
+
+.qqemoji49 {
+    background-position: -102px -77px
+}
+
+.qqemoji50 {
+    background-position: -127px -77px
+}
+
+.qqemoji51 {
+    background-position: -152px -77px
+}
+
+.qqemoji52 {
+    background-position: -177px -77px
+}
+
+.qqemoji53 {
+    background-position: -202px -77px
+}
+
+.qqemoji54 {
+    background-position: -227px -77px
+}
+
+.qqemoji55 {
+    background-position: -252px -77px
+}
+
+.qqemoji56 {
+    background-position: -277px -77px
+}
+
+.qqemoji57 {
+    background-position: -302px -77px
+}
+
+.qqemoji58 {
+    background-position: -327px -77px
+}
+
+.qqemoji59 {
+    background-position: -352px -77px
+}
+
+.qqemoji60 {
+    background-position: -2px -102px
+}
+
+.qqemoji61 {
+    background-position: -27px -102px
+}
+
+.qqemoji62 {
+    background-position: -52px -102px
+}
+
+.qqemoji63 {
+    background-position: -77px -102px
+}
+
+.qqemoji64 {
+    background-position: -102px -102px
+}
+
+.qqemoji65 {
+    background-position: -127px -102px
+}
+
+.qqemoji66 {
+    background-position: -152px -102px
+}
+
+.qqemoji67 {
+    background-position: -177px -102px
+}
+
+.qqemoji68 {
+    background-position: -202px -102px
+}
+
+.qqemoji69 {
+    background-position: -227px -102px
+}
+
+.qqemoji70 {
+    background-position: -252px -102px
+}
+
+.qqemoji71 {
+    background-position: -277px -102px
+}
+
+.qqemoji72 {
+    background-position: -302px -102px
+}
+
+.qqemoji73 {
+    background-position: -327px -102px
+}
+
+.qqemoji74 {
+    background-position: -352px -102px
+}
+
+.qqemoji75 {
+    background-position: -2px -127px
+}
+
+.qqemoji76 {
+    background-position: -27px -127px
+}
+
+.qqemoji77 {
+    background-position: -52px -127px
+}
+
+.qqemoji78 {
+    background-position: -77px -127px
+}
+
+.qqemoji79 {
+    background-position: -102px -127px
+}
+
+.qqemoji80 {
+    background-position: -127px -127px
+}
+
+.qqemoji81 {
+    background-position: -152px -127px
+}
+
+.qqemoji82 {
+    background-position: -177px -127px
+}
+
+.qqemoji83 {
+    background-position: -202px -127px
+}
+
+.qqemoji84 {
+    background-position: -227px -127px
+}
+
+.qqemoji85 {
+    background-position: -252px -127px
+}
+
+.qqemoji86 {
+    background-position: -277px -127px
+}
+
+.qqemoji87 {
+    background-position: -302px -127px
+}
+
+.qqemoji88 {
+    background-position: -327px -127px
+}
+
+.qqemoji89 {
+    background-position: -352px -127px
+}
+
+.qqemoji90 {
+    background-position: -2px -152px
+}
+
+.qqemoji91 {
+    background-position: -27px -152px
+}
+
+.qqemoji92 {
+    background-position: -52px -152px
+}
+
+.qqemoji93 {
+    background-position: -77px -152px
+}
+
+.qqemoji94 {
+    background-position: -102px -152px
+}
+
+.qqemoji95 {
+    background-position: -127px -152px
+}
+
+.qqemoji96 {
+    background-position: -152px -152px
+}
+
+.qqemoji97 {
+    background-position: -177px -152px
+}
+
+.qqemoji98 {
+    background-position: -202px -152px
+}
+
+.qqemoji99 {
+    background-position: -227px -152px
+}
+
+.qqemoji100 {
+    background-position: -252px -152px
+}
+
+.qqemoji101 {
+    background-position: -277px -152px
+}
+
+.qqemoji102 {
+    background-position: -302px -152px
+}
+
+.qqemoji103 {
+    background-position: -327px -152px
+}
+
+.qqemoji104 {
+    background-position: -352px -152px
+}
