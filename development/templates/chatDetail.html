@@ -1,4 +1,5 @@
 <div id="chat-window" class="row zs-chat-window" ng-controller="ChatDetailController">
+    <!--
     <div class="row">
         <div class="col-md-4 col-sm-10 col-sm-offset-1 col-md-offset-4">
             <nav class="text-center" aria-label="Page navigation">
@@ -20,7 +21,7 @@
             </nav>
         </div>
     </div>
-
+    -->
     <div class="row zs-message-wrapper" ng-repeat="(key,message) in chatData">
         <div class="row">
             <p class="zs-message-time" ng-show="{{message.time == ''?false:true }}" >{{message.time}}</p>
@@ -43,6 +44,7 @@
         </div>
     </div>
 
+    <!--
     <div class="row">
         <div class="col-md-4 col-sm-10 col-sm-offset-1 col-md-offset-4">
             <nav class="text-center" aria-label="Page navigation">
@@ -64,4 +66,5 @@
             </nav>
         </div>
     </div>
+    -->
 </div>

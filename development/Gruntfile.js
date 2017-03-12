@@ -34,7 +34,8 @@ module.exports = function(grunt){
             options:{
                 force:true
             },
-            build:["../build/"]
+            build:["../build/"],
+            singleHtml:["../distHtml/"]
 
         },
         concat:{
