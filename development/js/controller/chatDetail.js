@@ -141,6 +141,7 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
                     message.time = formatTimeStamp2($scope.currentTimeStamp);
                 }
                 $scope.lastTimeStamp = $scope.currentTimeStamp;
+                //console.log(rows[i]);
                 switch(rows[i].Type)
                 {
                     case 1:// 文字消息
@@ -186,10 +187,7 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
                 if($scope.currentPage!=$scope.totalPageCount){
                     $scope.goToPage($scope.currentPage+1);
                 }
-            }else{
-
             }
-
         });
     };
     // 构造函数
@@ -220,7 +218,6 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
         sqlite.connect($scope.outputPath.sqliteFile);
         $scope.totalMessageCount = sqlite.run("SELECT count(*) as count from ChatData")[0].count;
         $scope.totalPageCount = Math.ceil($scope.totalMessageCount/$scope.limitGap);
-        sqlite.close();
 
         $scope.currentPage = 1;
         //- 按照limit规则，每按一次loadMore载入指定数量的消息
@@ -245,7 +242,7 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
     $scope.templateImage = function (row) {
         var fs = require('fs');
         var path = require('path');
-        var imgTag = ""
+        var imgTag = "";
         if (fs.existsSync(path.join($scope.outputPath.imageThumbnailFolder,row.thumbnailName))){
             var data = fs.readFileSync(path.join($scope.outputPath.imageThumbnailFolder, row.thumbnailName));
             imgTag = "<img>";
