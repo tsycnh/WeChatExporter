@@ -2,6 +2,7 @@ var WechatBackupControllers = angular.module('WechatBackupControllers',[]);
 WechatBackupControllers.controller('EntryController',["$scope","$state",function ($scope,$state) {
     $scope.page = "entry page";
     $scope.dPath = "";
+    $scope.otherNickNames = {};
     $scope.onFileChange = function (files) {
         console.log(files);
         $scope.sqlFile = files[0].path;
@@ -20,13 +21,14 @@ WechatBackupControllers.controller('TopBarController',["$scope","$rootScope",fun
 // chatList.html页面的controller
 WechatBackupControllers.controller('ChatListController',["$scope","$state", "$stateParams",function ($scope,$state, $stateParams) {
     $scope.wechatUserList = [];
+    $scope.wechatUserSelected = "";
     $scope.dbTables = [];
+    $scope.otherNickNames = {};
     $scope.totalTablesCount = -1;
     $scope.tableSelected = "";
     $scope.previewData = [];
     $scope.filePath = "";
     $scope.documentsPath = $stateParams.documentsPath;
-
 
     // "构造函数"，页面载入的时候执行
     $scope.ChatListController = function () {
@@ -44,92 +46,6 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
                 $scope.wechatUserList.push(documentsFileList[i]);
             }
         }
-        //$scope.$apply();
-
-
-        // sqlite3相关文档：https://github.com/mapbox/node-sqlite3/wiki/API
-        /*
-        var sqlite3 = require('sqlite3');
-        // 打开一个sqlite数据库
-        var db = new sqlite3.Database($scope.filePath,sqlite3.OPEN_READONLY,function (error) {
-            if (error){
-                console.log("Database error:",error);
-            }
-        });
-
-        // 查找数据库内的所有table，并逐个遍历
-         db.each("select * from SQLITE_MASTER where type = 'table' and name like 'Chat/_%' ESCAPE '/' ;",function (error,row) {
-             // 回调函数，没获取一个条目，执行一次，第二个参数为当前条目
-
-             // 声明一个promise，将条目的name传入resolve
-            var getRowName = new Promise(function (resolve,reject) {
-                if(!error)
-                {
-                    //console.log("row name: ",row.name);
-                    resolve(row.name);
-                    // let sql = "select count(*) as count from "+ row.name;
-                    // let r = db.get(sql,function (error,result) {
-                    //     if(!error)
-                    //         console.log("get:",result);
-                    //     else
-                    //         console.log("get error:",error);
-                    // });
-                    // console.log("row count: ",r);
-                }else{
-                    //console.log("row error:",error);
-                    reject(error);
-                }
-            });
-             // 声明一个带参数的promise，写法和getRowName略有不同
-             var getCount = function (rowName) {
-                 var promise = new Promise(function (resolve,reject) {
-                     ///
-                     var sql = "select count(*) as count from "+ rowName;
-                     var r = db.get(sql,function (error,result) {
-                         if(!error) {
-                             //console.log("count:", result.count);
-                             //将传入的rowName和结果的count数一并传出去
-                             resolve([rowName,result.count]);
-                         }
-                         else {
-                             console.log("count error:", error);
-                             reject(error)
-                         }
-                     });
-                     ///
-                 });
-                 return promise;
-             };
-             // 执行promise。
-             // 先getRowName,然后每获取到一个rowName就传入到getCount函数内，接着一个.then().里面输出的就是rowName和count一一对应的数组
-            getRowName
-                .then(getCount)
-                .then(function (result) {
-                //
-
-                    db.get("select count(*) as count,MesSvrID as serverID from "+result[0],function (error, row) {
-                        //console.log(row);
-                        if(!(row.count <= 10))
-                        {
-                            console.log("rowName:",result[0],"count:",result[1]);
-                             $scope.dbTables.push(result);
-                            // if($scope.dbTables.length == $scope.totalTablesCount){
-                            //     console.log("scope apply1,tables count:",$scope.dbTables.length)
-                            //     $scope.$apply();
-                            // }
-                        }
-                        $scope.$apply();
-                    });
-            });
-        },function (error,result) {
-            if(!error){
-                $scope.totalTablesCount = result;
-                console.log("completed total tables Count:",result);
-            }else{
-                console.log("complete error:",error);
-            }
-        });
-        */
     };
     // 执行"构造函数"
     $scope.ChatListController();
@@ -139,21 +55,46 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
     };
     $scope.onWechatUserMD5Selected = function(wechatUserMD5){
         console.log(wechatUserMD5);
+        $scope.wechatUserSelected = wechatUserMD5;
         $scope.dbTables =[];
         // 1.   定位到当前目录的mmsqlite文件
+        var sqlitefilePath = $scope.documentsPath + "/" + wechatUserMD5 + "/DB/MM.sqlite";
+        var contactSqliteFilePath = $scope.documentsPath + "/" + wechatUserMD5 +"/DB/WCDB_Contact.sqlite";
 
-        var sqlitefilePath = $scope.documentsPath+"/"+wechatUserMD5+"/DB/MM.sqlite";
+        var sqlite3 = require('sqlite3');
+
+        var contactDb = new sqlite3.Database(contactSqliteFilePath,sqlite3.OPEN_READONLY,function (error) {
+            if (error){
+                console.log("Database error:",error);
+            }
+        });
+
+        contactDb.each("select * from Friend;",function (error,row) {
+            // 回调函数，每获取一个条目，执行一次，第二个参数为当前条目
+            var md5 = require('js-md5');
+
+            var nameMd5 = md5(row.userName);
+            //console.log(row.userName,nameMd5);
+            $scope.otherNickNames[nameMd5] = {wechatID:row.userName,nickName:getNickName(Utf8ArrayToStr(row.dbContactRemark))};
+
+            //console.log(row.dbContactRemark);
+            //console.log(Utf8ArrayToStr(row.dbContactRemark));
+        },function (error, result) {
+            console.log('names over:',result);
+            console.log('names size:',$scope.otherNickNames.length);
+        });
+
         $scope.filePath = sqlitefilePath;
         // sqlite3相关文档：https://github.com/mapbox/node-sqlite3/wiki/API
 
-        var sqlite3 = require('sqlite3');
+        //var sqlite3 = require('sqlite3');
         // 打开一个sqlite数据库
         var db = new sqlite3.Database(sqlitefilePath,sqlite3.OPEN_READONLY,function (error) {
             if (error){
                 console.log("Database error:",error);
             }
         });
-
+        console.log("nickNames Size:",$scope.otherNickNames.length);
         // 查找数据库内的所有table，并逐个遍历
         db.each("select * from SQLITE_MASTER where type = 'table' and name like 'Chat/_%' ESCAPE '/' ;",function (error,row) {
             // 回调函数，没获取一个条目，执行一次，第二个参数为当前条目
@@ -162,18 +103,8 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
             var getRowName = new Promise(function (resolve,reject) {
                 if(!error)
                 {
-                    //console.log("row name: ",row.name);
                     resolve(row.name);
-                    // let sql = "select count(*) as count from "+ row.name;
-                    // let r = db.get(sql,function (error,result) {
-                    //     if(!error)
-                    //         console.log("get:",result);
-                    //     else
-                    //         console.log("get error:",error);
-                    // });
-                    // console.log("row count: ",r);
                 }else{
-                    //console.log("row error:",error);
                     reject(error);
                 }
             });
@@ -204,9 +135,15 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
                 .then(function (result) {
                     db.get("select count(*) as count,MesSvrID as serverID from "+result[0],function (error, row) {
                         //console.log(row);
-                        if(!(row.count <= 10))
+                        if(!(row.count <= 100))
                         {
-                            console.log("rowName:",result[0],"count:",result[1]);
+                            // result[0] : table name // result[1] : table count
+                            var currentChatterMd5 = getChatterMd5(result[0]);
+                            //result.push(currentChatterMd5);
+                            //console.log("nickNames Size here:",$scope.otherNickNames);
+                            console.log("rowName:",result[0],"count:",result[1]," md5:",currentChatterMd5," user Name:",$scope.otherNickNames[currentChatterMd5].nickName);
+                            result.push($scope.otherNickNames[currentChatterMd5].nickName);
+
                             $scope.dbTables.push(result);
                             // if($scope.dbTables.length == $scope.totalTablesCount){
                             //     console.log("scope apply1,tables count:",$scope.dbTables.length)
@@ -433,7 +370,7 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
             }
         }
         return audioTag;
-    }
+    };
     $scope.templateVideo = function (row) {
         console.log("load a video: ",$scope.videoFolderPath+row.MesLocalID+".mp4")
         var fs = require('fs');
@@ -502,5 +439,41 @@ function getMyMd5(folderPath) {
 function getChatterMd5(tableName) {
     var sep = tableName.split("_");
     return sep.pop();
+}
+function getNickName(fullNameInfo) {
+    var sep = fullNameInfo.split("\"");
+    sep.pop();
+    return sep;
+}
+function Utf8ArrayToStr(array) {
+    var out, i, len, c;
+    var char2, char3;
 
+    out = "";
+    len = array.length;
+    i = 0;
+    while(i < len) {
+        c = array[i++];
+        switch(c >> 4)
+        {
+            case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
+            // 0xxxxxxx
+            out += String.fromCharCode(c);
+            break;
+            case 12: case 13:
+            // 110x xxxx   10xx xxxx
+            char2 = array[i++];
+            out += String.fromCharCode(((c & 0x1F) << 6) | (char2 & 0x3F));
+            break;
+            case 14:
+                // 1110 xxxx  10xx xxxx  10xx xxxx
+                char2 = array[i++];
+                char3 = array[i++];
+                out += String.fromCharCode(((c & 0x0F) << 12) |
+                    ((char2 & 0x3F) << 6) |
+                    ((char3 & 0x3F) << 0));
+                break;
+        }
+    }
+    return out;
 }
