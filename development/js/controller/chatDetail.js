@@ -197,7 +197,7 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
         $scope.generateHtml = $stateParams.generateHtml;
         var path = require('path');
         var sqlite3 = require('sqlite3');
-        var fse = require('fs-extra')
+        var fse = require('fs-extra');
         $scope.qqEmoji = fse.readJsonSync('./resources/qqemoji.json');
 
         $scope.outputPath.rootFolder = $stateParams.outputPath;
@@ -222,6 +222,10 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
         $scope.currentPage = 1;
         //- 按照limit规则，每按一次loadMore载入指定数量的消息
         //$scope.loadMore();// 载入数据库内容
+        if($scope.generateHtml == "true")
+        {
+            fse.emptyDirSync("../distHtml");
+        }
         $scope.goToPage($scope.currentPage);
     };
     $scope.ChatDetailController();
@@ -328,7 +332,7 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
     };
 
     $scope.saveRawHtml = function () {
-        var fs = require('fs');
+        var fs = require('fs-extra');
         var markup = document.documentElement.innerHTML;
         fs.writeFileSync("../distHtml/index_"+$scope.currentPage+".html",markup);
     };
