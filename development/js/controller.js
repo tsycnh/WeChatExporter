@@ -8,7 +8,8 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
         $state.go('chatDetail',{
             outputPath:$scope.outputPath,
             generateHtml:$scope.generateHtml,
-            showQqemoji:$scope.showQqemoji
+            showQqemoji:$scope.showQqemoji,
+            ship:{a:"aa",b:"bb"}
         });
     };
 

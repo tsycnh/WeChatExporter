@@ -40,6 +40,7 @@ WechatBackup.config(["$stateProvider","$urlRouterProvider",function ($stateProvi
     var chatDetailState = {
         name:"chatDetail",
         url:"/chatDetail/:outputPath/:generateHtml/:showQqemoji",
+        params:{ship:null},
         views:{
             '':{
                 templateUrl:"/templates/index.html"
