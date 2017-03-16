@@ -14,6 +14,7 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
         videoThumbnailFolder:""
     };
     $scope.generateHtml = false;
+    $scope.showQqemoji = false;
     $scope.chatData = [];
     $scope.pageLink = [];
     $scope.qqEmoji = {};
@@ -195,6 +196,7 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
         console.log("enter ChatDetailController");
         console.log($stateParams);
         $scope.generateHtml = $stateParams.generateHtml;
+        $scope.showQqemoji = $stateParams.showQqemoji;
         var path = require('path');
         var sqlite3 = require('sqlite3');
         var fse = require('fs-extra');
@@ -241,7 +243,11 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
     });
 
     $scope.templateMessage = function(row) {
-        return $scope.messageAddQQemoji(row.Message);
+        if($scope.showQqemoji == "true") {
+            return $scope.messageAddQQemoji(row.Message);
+        }else{
+            return row.Message;
+        }
     };
     $scope.templateImage = function (row) {
         var fs = require('fs');
@@ -333,7 +339,7 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
 
     $scope.saveRawHtml = function () {
         var fs = require('fs-extra');
-        var markup = document.documentElement.innerHTML;
+        var markup = document.documentElement.outerHTML;
         fs.writeFileSync("../distHtml/index_"+$scope.currentPage+".html",markup);
     };
 }]);

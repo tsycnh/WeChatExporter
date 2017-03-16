@@ -39,7 +39,7 @@ WechatBackup.config(["$stateProvider","$urlRouterProvider",function ($stateProvi
     // 聊天详情页面
     var chatDetailState = {
         name:"chatDetail",
-        url:"/chatDetail/:outputPath/:generateHtml",
+        url:"/chatDetail/:outputPath/:generateHtml/:showQqemoji",
         views:{
             '':{
                 templateUrl:"/templates/index.html"
@@ -52,26 +52,9 @@ WechatBackup.config(["$stateProvider","$urlRouterProvider",function ($stateProvi
             }
         }
     };
-    // 教程页面
-    var tutorialState = {
-        name:"tutorial",
-        url:"/tutorial",
-        views:{
-            '':{
-                templateUrl:"/templates/index.html"
-            },
-            'topbar@tutorial':{
-                templateUrl:"/templates/topbar.html"
-            },
-            'main@tutorial':{
-                templateUrl:"/templates/tutorial.html"
-            }
-        }
-    };
 
     $stateProvider.state(entryState);
     $stateProvider.state(chatListState);
-    $stateProvider.state(tutorialState);
     $stateProvider.state(chatDetailState);
 
 }])

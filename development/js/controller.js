@@ -3,8 +3,13 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
     $scope.page = "entry page";
     $scope.outputPath = "/Users/shidanlifuhetian/Desktop/output";
     $scope.generateHtml = false;
+    $scope.showQqemoji = false;
     $scope.goToChatDetailPage = function () {
-        $state.go('chatDetail',{outputPath:$scope.outputPath,generateHtml:$scope.generateHtml});
+        $state.go('chatDetail',{
+            outputPath:$scope.outputPath,
+            generateHtml:$scope.generateHtml,
+            showQqemoji:$scope.showQqemoji
+        });
     };
 
     $scope.documentsPath = {
