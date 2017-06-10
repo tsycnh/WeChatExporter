@@ -60,6 +60,7 @@ li{
     background-color: #83f256 ;
     padding: 10px;
     border-radius: 10px;
+    max-width: 400px;
 }
 .zs-message-content-other{
     background-color: #ffffff;

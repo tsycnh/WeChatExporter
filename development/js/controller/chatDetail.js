@@ -292,11 +292,13 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
         }else{
             var videoFileThumbnailPath = path.join($scope.outputPath.videoThumbnailFolder,row.thumbnailName);
             //console.log(videoFileThumbnailPath);
-            var data = fs.readFileSync(videoFileThumbnailPath);
+            if(fs.existsSync(videoFileThumbnailPath)) {
+                var data = fs.readFileSync(videoFileThumbnailPath);
 
             if(data != undefined) {
                 var a = data.toString("base64");
                 videoTag = "<img src='data:image/jpeg;base64," + a + "'/>";
+            }
             }
             videoTag += "<p>【视频不存在】";
         }

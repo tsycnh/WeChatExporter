@@ -30,6 +30,7 @@
             <div class="col-md-1 col-sm-1 col-xs-1 text-right">
                 <div class="row">
                 <img ng-show="{{message.owner == 1?'true':'false'}}" width="50" height="50" src="resources/other.jpg" alt="">
+                <img ng-show="{{message.owner == 1?'false':'true'}}" width="50" height="50" src="resources/empty.png" alt="">
                     </div>
             </div>
             <div class="col-md-10 col-sm-10 col-xs-10 zs-message">
@@ -39,6 +40,7 @@
             <div class="col-md-1 col-sm-1 col-xs-1 text-left">
                 <div class="row">
                     <img ng-show="{{message.owner == 0?'true':'false'}}" width="50" height="50" src="resources/me.jpg" alt="">
+                    <img ng-show="{{message.owner == 0?'false':'true'}}" width="50" height="50" src="resources/empty.png" alt="">
                 </div>
             </div>
         </div>

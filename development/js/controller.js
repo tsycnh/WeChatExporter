@@ -554,9 +554,7 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
                 })
             }
             //console.log("scope apply,previewData count:",$scope.previewData.length)
-
             $scope.$apply();
-
         });
     };
 
