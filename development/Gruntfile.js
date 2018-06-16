@@ -1,46 +1,46 @@
-module.exports = function(grunt){
+module.exports = function (grunt) {
     // 项目配置
     // 下面的只是配置
     grunt.initConfig({
-        pkg:grunt.file.readJSON("./package.json"),
-    //    具体任务
-        copy:{
-            main:{
-                files:[
+        pkg: grunt.file.readJSON("./package.json"),
+        //    具体任务
+        copy: {
+            main: {
+                files: [
                     // 拷贝除了imgs文件夹，除了icon-test文件夹
                     // /** 表示除了文件夹及其内部的所有东西
                     // /*表示文件夹内的所有东西，文件夹还是会被拷贝
-                    {expand:true,src:["./imgs/**","!./imgs/icon-test/**"],dest:"../build/"},
-                    {expand:true,src:["./framework/**","./templates/**","./css/**"],dest:"../build/"},
-                    {expand:true,src:["./index.html","./package.json"],dest:"../build/"},
+                    {expand: true, src: ["./imgs/**", "!./imgs/icon-test/**"], dest: "../build/"},
+                    {expand: true, src: ["./framework/**", "./templates/**", "./css/**"], dest: "../build/"},
+                    {expand: true, src: ["./index.html", "./package.json"], dest: "../build/"},
                     // {expand:true,src:["./js/**"],dest:"../build/"}
                 ]
             },
-            sqlite3:{
+            sqlite3: {
                 expand: true,
-                cwd:"framework",
-                src:"node-webkit-v0.19.3-darwin-x64/**",
-                dest:"../小美微信备份Release/小美微信备份.app/Contents/Resources/app.nw/node_modules/sqlite3/lib/binding/"
+                cwd: "framework",
+                src: "node-webkit-v0.19.3-darwin-x64/**",
+                dest: "../小美微信备份Release/小美微信备份.app/Contents/Resources/app.nw/node_modules/sqlite3/lib/binding/"
 
             },
-            singleHtml:{
+            singleHtml: {
                 expand: true,
-                cwd:"resources",
-                src:"**",
-                dest:"../distHtml/resources/"
+                cwd: "resources",
+                src: "**",
+                dest: "../distHtml/resources/"
             }
         },
-        clean:{
-            options:{
-                force:true
+        clean: {
+            options: {
+                force: true
             },
-            build:["../build/"],
-            singleHtml:["../distHtml/"]
+            build: ["../build/"],
+            singleHtml: ["../distHtml/"]
 
         },
-        concat:{
-            generated:{
-                files:[{
+        concat: {
+            generated: {
+                files: [{
                     dest: '.tmp/concat/js/app.js',
                     src: [
                         './js/app.js',
@@ -69,9 +69,9 @@ module.exports = function(grunt){
                         rename: function (dest, src) {
                             var folder = src.substring(0, src.lastIndexOf('/'));
                             var filename = src.substring(src.lastIndexOf('/'), src.length);
-                                filename = filename.substring(0, filename.lastIndexOf('.'));
-                            var fileresult=dest + folder + filename + '.min.js';
-                            grunt.log.writeln("现处理文件："+src+"  处理后文件："+fileresult);
+                            filename = filename.substring(0, filename.lastIndexOf('.'));
+                            var fileresult = dest + folder + filename + '.min.js';
+                            grunt.log.writeln("现处理文件：" + src + "  处理后文件：" + fileresult);
                             return fileresult;
                         }
                     }
@@ -89,15 +89,15 @@ module.exports = function(grunt){
                             var folder = src.substring(0, src.lastIndexOf('/'));
                             var filename = src.substring(src.lastIndexOf('/'), src.length);
                             filename = filename.substring(0, filename.lastIndexOf('.'));
-                            var fileresult=dest + folder + filename + '.min.js';
-                            grunt.log.writeln("现处理文件："+src+"  处理后文件："+fileresult);
+                            var fileresult = dest + folder + filename + '.min.js';
+                            grunt.log.writeln("现处理文件：" + src + "  处理后文件：" + fileresult);
                             return fileresult;
                         }
                     }
                 ]
             },
-            app:{
-                files:{
+            app: {
+                files: {
                     '../build/js/app.min.js': [
                         './js/app.js',
                         './js/controller.js',
@@ -107,37 +107,47 @@ module.exports = function(grunt){
                 }
             }
         },
-        watch:{
-            scripts:{
-                files:"./js/*.js",
-                tasks:'uglify'
+        watch: {
+            scripts: {
+                files: "./js/*.js",
+                tasks: 'uglify'
             }
         },
         useminPrepare: {
             html: 'index.html',
-            options:{
-                dest:"../build"
+            options: {
+                dest: "../build"
             }
         },
         usemin: {
             html: '../build/index.html',
-            singleHtml:'../distHtml/index_*.html'
+            singleHtml: '../distHtml/index_*.html'
         },
         shell: {
             makeDir: {
                 command: 'mkdir test'
             },
-            nwbBuild:{
-                command:'sh ./build.sh'
+            nwbBuild: {
+                command: 'sh ./build.sh'
             },
             dirListing: {
                 command: 'ls'
             }
         },
-        cssmin:{
-            target: {
+        cssmin: {
+            singleHtml: {
                 files: {
                     '../distHtml/resources/style.min.css': [
+                        './framework/bootstrap-3.3.7/css/bootstrap.min.css',
+                        './framework/bootstrap-3.3.7/css/bootstrap-theme.min.css',
+                        './css/style.css',
+                        './css/qqemoji.css'
+                    ]
+                }
+            },
+            software: {
+                files: {
+                    '../build/resources/style.min.css': [
                         './framework/bootstrap-3.3.7/css/bootstrap.min.css',
                         './framework/bootstrap-3.3.7/css/bootstrap-theme.min.css',
                         './css/style.css',
@@ -162,34 +172,35 @@ module.exports = function(grunt){
 
 
     //grunt.registerTask("default",["watch"]);
-    grunt.registerTask('copyCommonFiles',function () {
+    grunt.registerTask('copyCommonFiles', function () {
         grunt.log.writeln("copy common files");
-        grunt.task.run(['clean:build','copy:main']);
+        grunt.task.run(['clean:build', 'copy:main']);
 
     });
-    grunt.registerTask('copySensitiveFiles',function () {
+    grunt.registerTask('copySensitiveFiles', function () {
         grunt.log.writeln("copy sensitive files");
         grunt.task.run('uglify:app');//打包appjs文件
     });
-    grunt.registerTask('buildWithNwb',function () {
+    grunt.registerTask('buildWithNwb', function () {
         grunt.log.writeln("build with nwb tool");
         grunt.task.run('shell:nwbBuild');
         // grunt.task.run('shell:dirListing');
     });
     //grunt.registerMultiTasks();
-    grunt.registerTask('dist',[
+    grunt.registerTask('dist', [
         'useminPrepare',
         'copyCommonFiles',
         'copySensitiveFiles',
         'usemin',
+        'cssmin:software',
         'buildWithNwb',
         'copy:sqlite3'
     ]);
     // 该任务用来生成单个页面，导出html查看聊天记录
-    grunt.registerTask('singleHtml',[
+    grunt.registerTask('singleHtml', [
         'useminPrepare',
         "copy:singleHtml",
-        "cssmin:target",
+        "cssmin:singleHml",
         'usemin:singleHtml'
     ]);
 };
