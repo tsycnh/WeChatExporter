@@ -49,7 +49,12 @@ li{
     margin: 10px;
 }
 .zs-message{
-    margin-bottom: 10px;
+    /*margin-bottom: 10px;*/
+    margin-top: 7px;
+}
+.zs-message-time{
+    text-align: center;
+    color: #767676;
 }
 .zs-message-content{
     background-color: #83f256 ;
@@ -58,4 +63,7 @@ li{
 }
 .zs-message-content-other{
     background-color: #ffffff;
+}
+#chat-window{
+    height:700px; overflow:scroll;
 }
