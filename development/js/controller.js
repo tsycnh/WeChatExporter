@@ -675,6 +675,9 @@ WechatBackupControllers.controller('Soft2Controller',["$scope","$state",function
                         result = $scope.processAudio(row.MesLocalID,row.CreateTime);
                         message.type = "语音消息";
                         break;
+                    case 42:// 名片
+                        message.type = "名片";
+                        break;
                     case 43:// 视频消息
                     case 62:// 小视频消息
                         result = $scope.processVideo(row.MesLocalID,row.CreateTime);
@@ -683,19 +686,21 @@ WechatBackupControllers.controller('Soft2Controller',["$scope","$state",function
                     case 47:// 动画表情
                         message.type = "动画表情";
                         break;
-                    case 49:// 分享链接
-                        message.type = "分享链接";
-                        break;
                     case 48:// 位置
                         message.type = "位置";
                         break;
-                    case 42:// 名片
-                        message.type = "名片";
+                    case 49:// 分享链接
+                        message.type = "分享链接";
                         break;
                     case 50:// 语音、视频电话
                         message.type = "语音、视频电话";
                         break;
+                    case 64:// 语音聊天
+                        //TODO:增加对这个内容的解析
+                        message.type = "语音聊天";
+                        break;
                     case 10000:
+                        //TODO:这个应该是撤回消息
                         message.type = "系统消息";
                         break;
                     default:
