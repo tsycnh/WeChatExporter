@@ -1,13 +1,25 @@
 <div class="row" ng-controller="ChatListController">
-    <div class="col-md-6">
+    <div class="col-md-7">
         <div class="row">在下方列表选择要导出的聊天列表，默认只显示大于10条的聊天记录</div>
-        <div class="row" style="height:700px; overflow:scroll;">
+        <div class="row" style="height:150px; overflow:scroll;">
             <table class="table table-striped" >
                 <tr>
-                    <th>聊天名</th>
+                    <th>微信账户</th>
+                </tr>
+                <tr ng-repeat="(key, value) in wechatUserList" ng-click="onWechatUserMD5Selected(value)" >
+                    <td>{{value}}</td>
+                </tr>
+            </table>
+        </div>
+        <div class="row" style="height:550px; overflow:scroll;">
+            <table class="table table-striped" >
+                <tr>
+                    <th>微信昵称</th>
+                    <th>聊天对象</th>
                     <th>聊天消息总数</th>
                 </tr>
                 <tr ng-repeat="(key, value) in dbTables" ng-click="onChatTableSelected(value[0])" >
+                    <td>{{value[2][0]}}</td>
                     <td>{{value[0]}}</td>
                     <td>{{value[1]}}</td>
                 </tr>
@@ -15,16 +27,17 @@
         </div>
     </div>
 
-    <div class="col-md-6">
+    <div class="col-md-5">
         <div class="row">
             <div class="col-md-9">
-                <p>已选择：{{tableSelected}}</p>
+                <p>已选择</p>
+                <p class="text-danger">{{wechatUserSelected}}</p>
+                <p class="text-danger">{{tableSelected}}</p>
                 <p>显示10条信息用于确认聊天对象</p>
                 <!--<p>{{filePath}}</p>-->
             </div>
             <div class="col-md-3">
-                <button ng-click="exportChat(tableSelected)"  class="btn btn-primary">导出聊天记录</button>
-
+                <!--<button ng-click="exportChat(tableSelected)"  class="btn btn-primary">导出聊天记录</button>-->
             </div>
         </div>
         <div class="row" style="height:700px; overflow:scroll;">

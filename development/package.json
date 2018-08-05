@@ -1,5 +1,5 @@
 {
-  "name": "samplekingdom",
+  "name": "soft1",
   "version": "0.0.1",
   "description": "小美微信备份",
   "main": "index.html",
@@ -8,7 +8,7 @@
     "icon": "logo",
     "position": "center",
     "toolbar": true,
-    "width": 1000,
+    "width": 1200,
     "height": 800,
     "resizable": true,
     "show_in_taskbar": true,
@@ -22,6 +22,7 @@
   "dependencies": {
     "express": "3.x",
     "fs-extra": "^2.0.0",
+    "js-md5": "^0.4.2",
     "sqlite3": "~3.1.8",
     "systeminformation": "^3.16.0"
   },

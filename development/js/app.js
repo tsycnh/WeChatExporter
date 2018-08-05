@@ -23,7 +23,7 @@ WechatBackup.config(["$stateProvider","$urlRouterProvider",function ($stateProvi
     // 显示聊天列表界面，选择待导出的聊天
     var chatListState = {
         name:"chatList",
-        url:"/chatList/:sqliteFilePath",
+        url:"/chatList/:documentsPath",
         views:{
             '':{
                 templateUrl:"/templates/index.html"
