@@ -24,7 +24,8 @@
     "fs-extra": "^2.0.0",
     "js-md5": "^0.4.2",
     "sqlite3": "~3.1.8",
-    "systeminformation": "^3.16.0"
+    "systeminformation": "^3.16.0",
+    "plist": "^2.0.1"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

@@ -35,6 +35,21 @@ WechatBackup.config(["$stateProvider","$urlRouterProvider",function ($stateProvi
             }
         }
     };
+    var soft2State ={
+        name:"soft2",
+        url:"/soft2",
+        views:{
+            '':{
+                templateUrl:"/templates/index.html"
+            },
+            'topbar@soft2':{
+                templateUrl:"/templates/topbar.html"
+            },
+            'main@soft2':{
+                templateUrl:"/templates/soft2.html"
+            }
+        }
+    };
     // 显示聊天列表界面，选择待导出的聊天
     var chatListState = {
         name:"chatList",
@@ -115,6 +130,7 @@ WechatBackup.config(["$stateProvider","$urlRouterProvider",function ($stateProvi
     //     }
     // };
     $stateProvider.state(soft1State);
+    $stateProvider.state(soft2State);
     $stateProvider.state(entryState);
     $stateProvider.state(chatListState);
     $stateProvider.state(tutorialState);
