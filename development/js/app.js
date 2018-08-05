@@ -3,7 +3,7 @@
 //         WechatBackupControllers:所有控制器 定义在 js/controllers.js
 var WechatBackup = angular.module('WechatBackup',['ui.router','WechatBackupControllers','WechatBackupDirectives','WechatBackupFilters','ngSanitize']);
 WechatBackup.config(["$stateProvider","$urlRouterProvider",function ($stateProvider,$urlRouterProvider) {
-    $urlRouterProvider.otherwise('/entry');
+    $urlRouterProvider.otherwise('/newEntry');
     // 进入页面，选择Sqlite文件
     var entryState ={
         name:"entry",
@@ -69,6 +69,21 @@ WechatBackup.config(["$stateProvider","$urlRouterProvider",function ($stateProvi
         }
     };
 
+    var newEntryState = {
+        name:"newEntry",
+        url:"/newEntry",
+        views:{
+            '':{
+                templateUrl:"/templates/index.html"
+            },
+            'topbar@newEntry':{
+                templateUrl:"/templates/topbar.html"
+            },
+            'main@newEntry':{
+                templateUrl:"/templates/newEntry.html"
+            }
+        }
+        };
     // var testState = {
     //     name:"test",
     //     url:"/test",
@@ -88,6 +103,8 @@ WechatBackup.config(["$stateProvider","$urlRouterProvider",function ($stateProvi
     $stateProvider.state(chatListState);
     $stateProvider.state(tutorialState);
     $stateProvider.state(chatDetailState);
+    $stateProvider.state(newEntryState);
+
     // $stateProvider.state(testState);
 
 }])
