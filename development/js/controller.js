@@ -696,7 +696,7 @@ WechatBackupControllers.controller('Soft2Controller',["$scope","$state",function
                         message.type = "语音、视频电话";
                         break;
                     case 10000:
-                        message.type = "系统消息"
+                        message.type = "系统消息";
                         break;
                     default:
                         message.type = "其他类型消息";
@@ -739,7 +739,7 @@ WechatBackupControllers.controller('Soft2Controller',["$scope","$state",function
     };
     $scope.EntryController();
 }]);
-WechatBackupControllers.controller('Soft4Controller',["$scope","$state",function ($scope,$state) {
+WechatBackupControllers.controller('Soft3Controller',["$scope","$state",function ($scope,$state) {
     $scope.page = "entry page";
     $scope.outputPath = "";
     $scope.generateHtml = false;
@@ -766,7 +766,7 @@ WechatBackupControllers.controller('NewEntryController',["$scope","$state",funct
     $scope.otherNickNames = {};
     $scope.jumpToSoft1 = function () { $state.go('soft1') };
     $scope.jumpToSoft2 = function () { $state.go('soft2') };
-    // $scope.jumpToSoft3 = function () { $state.go('soft3') };
+    $scope.jumpToSoft3 = function () { $state.go('soft3') };
     $scope.jumpToSoft4 = function () { $state.go('soft4') };
 
     $scope.EntryController = function () {
