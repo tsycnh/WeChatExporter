@@ -1,5 +1,5 @@
 var WechatBackupControllers = angular.module('WechatBackupControllers',[]);
-WechatBackupControllers.controller('EntryController',["$scope","$state",function ($scope,$state) {
+WechatBackupControllers.controller('Soft1Controller',["$scope","$state",function ($scope,$state) {
     $scope.page = "entry page";
     $scope.dPath = "";
     $scope.otherNickNames = {};
@@ -11,6 +11,20 @@ WechatBackupControllers.controller('EntryController',["$scope","$state",function
         console.log(documentsPath);
         $state.go('chatList',{documentsPath:documentsPath});
     };
+    $scope.EntryController = function () {
+        console.log("entry controller constructor");
+    };
+    $scope.EntryController();
+}]);
+WechatBackupControllers.controller('NewEntryController',["$scope","$state",function ($scope,$state) {
+    $scope.page = "new entry page";
+    $scope.dPath = "";
+    $scope.otherNickNames = {};
+    $scope.jumpToSoft1 = function () { $state.go('soft1') };
+    $scope.jumpToSoft2 = function () { $state.go('soft2') };
+    $scope.jumpToSoft3 = function () { $state.go('soft3') };
+    $scope.jumpToSoft4 = function () { $state.go('soft4') };
+
     $scope.EntryController = function () {
         console.log("entry controller constructor");
     };
