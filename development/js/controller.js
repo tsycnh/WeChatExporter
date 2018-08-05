@@ -182,249 +182,6 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
     }
 }]);
 
-WechatBackupControllers.controller('ChatListController__old',["$scope","$state", "$stateParams",function ($scope,$state, $stateParams) {
-    $scope.wechatUserList = [];
-    $scope.dbTables = [];
-    $scope.totalTablesCount = -1;
-    $scope.tableSelected = "";
-    $scope.previewData = [];
-    $scope.filePath = "";
-    $scope.documentsPath = $stateParams.documentsPath;
-
-
-    // "构造函数"，页面载入的时候执行
-    $scope.ChatListController = function () {
-        console.log("constructor");
-        console.log($stateParams);
-        // 1. 查看当前目录下的所有文件
-        var fs = require('fs');
-        var documentsFileList = fs.readdirSync($scope.documentsPath);
-        // 2. 找到符合md5格式的文件夹        // 3. 将这几个文件夹的显示在页面上
-        for(var i=0;i<documentsFileList.length;i++)
-        {
-            //console.log(documentsFileList[i].length);
-            if(documentsFileList[i].length == 32 && documentsFileList[i]!="00000000000000000000000000000000"){
-                console.log(documentsFileList[i]);
-                $scope.wechatUserList.push(documentsFileList[i]);
-            }
-        }
-        //$scope.$apply();
-
-
-        // sqlite3相关文档：https://github.com/mapbox/node-sqlite3/wiki/API
-        /*
-        var sqlite3 = require('sqlite3');
-        // 打开一个sqlite数据库
-        var db = new sqlite3.Database($scope.filePath,sqlite3.OPEN_READONLY,function (error) {
-            if (error){
-                console.log("Database error:",error);
-            }
-        });
-
-        // 查找数据库内的所有table，并逐个遍历
-         db.each("select * from SQLITE_MASTER where type = 'table' and name like 'Chat/_%' ESCAPE '/' ;",function (error,row) {
-             // 回调函数，没获取一个条目，执行一次，第二个参数为当前条目
-
-             // 声明一个promise，将条目的name传入resolve
-            var getRowName = new Promise(function (resolve,reject) {
-                if(!error)
-                {
-                    //console.log("row name: ",row.name);
-                    resolve(row.name);
-                    // let sql = "select count(*) as count from "+ row.name;
-                    // let r = db.get(sql,function (error,result) {
-                    //     if(!error)
-                    //         console.log("get:",result);
-                    //     else
-                    //         console.log("get error:",error);
-                    // });
-                    // console.log("row count: ",r);
-                }else{
-                    //console.log("row error:",error);
-                    reject(error);
-                }
-            });
-             // 声明一个带参数的promise，写法和getRowName略有不同
-             var getCount = function (rowName) {
-                 var promise = new Promise(function (resolve,reject) {
-                     ///
-                     var sql = "select count(*) as count from "+ rowName;
-                     var r = db.get(sql,function (error,result) {
-                         if(!error) {
-                             //console.log("count:", result.count);
-                             //将传入的rowName和结果的count数一并传出去
-                             resolve([rowName,result.count]);
-                         }
-                         else {
-                             console.log("count error:", error);
-                             reject(error)
-                         }
-                     });
-                     ///
-                 });
-                 return promise;
-             };
-             // 执行promise。
-             // 先getRowName,然后每获取到一个rowName就传入到getCount函数内，接着一个.then().里面输出的就是rowName和count一一对应的数组
-            getRowName
-                .then(getCount)
-                .then(function (result) {
-                //
-
-                    db.get("select count(*) as count,MesSvrID as serverID from "+result[0],function (error, row) {
-                        //console.log(row);
-                        if(!(row.count <= 10))
-                        {
-                            console.log("rowName:",result[0],"count:",result[1]);
-                             $scope.dbTables.push(result);
-                            // if($scope.dbTables.length == $scope.totalTablesCount){
-                            //     console.log("scope apply1,tables count:",$scope.dbTables.length)
-                            //     $scope.$apply();
-                            // }
-                        }
-                        $scope.$apply();
-                    });
-            });
-        },function (error,result) {
-            if(!error){
-                $scope.totalTablesCount = result;
-                console.log("completed total tables Count:",result);
-            }else{
-                console.log("complete error:",error);
-            }
-        });
-        */
-    };
-    // 执行"构造函数"
-    $scope.ChatListController();
-
-    $scope.onFilesSelected = function(files) {
-        console.log("files - " + files);
-    };
-    $scope.onWechatUserMD5Selected = function(wechatUserMD5){
-        console.log(wechatUserMD5);
-        $scope.dbTables =[];
-        // 1.   定位到当前目录的mmsqlite文件
-
-        var sqlitefilePath = $scope.documentsPath+"/"+wechatUserMD5+"/DB/MM.sqlite";
-        $scope.filePath = sqlitefilePath;
-        // sqlite3相关文档：https://github.com/mapbox/node-sqlite3/wiki/API
-
-        var sqlite3 = require('sqlite3');
-        // 打开一个sqlite数据库
-        var db = new sqlite3.Database(sqlitefilePath,sqlite3.OPEN_READONLY,function (error) {
-            if (error){
-                console.log("Database error:",error);
-            }
-        });
-
-        // 查找数据库内的所有table，并逐个遍历
-        db.each("select * from SQLITE_MASTER where type = 'table' and name like 'Chat/_%' ESCAPE '/' ;",function (error,row) {
-            // 回调函数，没获取一个条目，执行一次，第二个参数为当前条目
-
-            // 声明一个promise，将条目的name传入resolve
-            var getRowName = new Promise(function (resolve,reject) {
-                if(!error)
-                {
-                    //console.log("row name: ",row.name);
-                    resolve(row.name);
-                    // let sql = "select count(*) as count from "+ row.name;
-                    // let r = db.get(sql,function (error,result) {
-                    //     if(!error)
-                    //         console.log("get:",result);
-                    //     else
-                    //         console.log("get error:",error);
-                    // });
-                    // console.log("row count: ",r);
-                }else{
-                    //console.log("row error:",error);
-                    reject(error);
-                }
-            });
-            // 声明一个带参数的promise，写法和getRowName略有不同
-            var getCount = function (rowName) {
-                var promise = new Promise(function (resolve,reject) {
-                    ///
-                    var sql = "select count(*) as count from "+ rowName;
-                    var r = db.get(sql,function (error,result) {
-                        if(!error) {
-                            //console.log("count:", result.count);
-                            //将传入的rowName和结果的count数一并传出去
-                            resolve([rowName,result.count]);
-                        }
-                        else {
-                            console.log("count error:", error);
-                            reject(error)
-                        }
-                    });
-                    ///
-                });
-                return promise;
-            };
-            // 执行promise。
-            // 先getRowName,然后每获取到一个rowName就传入到getCount函数内，接着一个.then().里面输出的就是rowName和count一一对应的数组
-            getRowName
-                .then(getCount)
-                .then(function (result) {
-                    db.get("select count(*) as count,MesSvrID as serverID from "+result[0],function (error, row) {
-                        //console.log(row);
-                        if(!(row.count <= 10))
-                        {
-                            console.log("rowName:",result[0],"count:",result[1]);
-                            $scope.dbTables.push(result);
-                            // if($scope.dbTables.length == $scope.totalTablesCount){
-                            //     console.log("scope apply1,tables count:",$scope.dbTables.length)
-                            //     $scope.$apply();
-                            // }
-                        }
-                        $scope.$apply();
-                    });
-                });
-        },function (error,result) {
-            if(!error){
-                $scope.totalTablesCount = result;
-                console.log("completed total tables Count:",result);
-            }else{
-                console.log("complete error:",error);
-            }
-        });
-    };
-    // 用户在左侧选择了具体table
-    $scope.onChatTableSelected = function (tableName) {
-        //alert(tableName);
-        $scope.tableSelected = tableName;
-        $scope.previewData = [];
-        // sqlite3相关文档：https://github.com/mapbox/node-sqlite3/wiki/API
-        var sqlite3 = require('sqlite3');
-        // 打开一个sqlite数据库
-        var db = new sqlite3.Database($scope.filePath,sqlite3.OPEN_READONLY,function (error) {
-            if (error){
-                console.log("Database error:",error);
-            }
-        });
-
-        var sql = "SELECT * FROM "+$scope.tableSelected+" order by CreateTime desc limit 10";
-        db.all(sql, function(err, rows) {
-            for(var i in rows){
-                var time = formatTimeStamp(rows[i].CreateTime)
-                //console.log(time);
-
-                $scope.previewData.push({
-                    time:time,
-                    message:rows[i].Message
-                })
-            }
-            //console.log("scope apply,previewData count:",$scope.previewData.length)
-
-            $scope.$apply();
-
-        });
-    };
-
-    $scope.exportChat = function (tableName) {
-        $state.go('chatDetail',{tableName:tableName,sqliteFilePath:$stateParams.sqliteFilePath});
-    }
-}]);
 // chatDetail.html页面的controller
 WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$stateParams",function ($scope, $state, $stateParams) {
 
@@ -623,16 +380,16 @@ WechatBackupControllers.controller('Soft1Controller',["$scope","$state",function
         console.log(documentsPath);
         $state.go('chatList',{documentsPath:documentsPath});
     };
-    $scope.EntryController = function () {
-        console.log("entry controller constructor");
+    $scope.Soft1Controller = function () {
+        console.log("entry soft1 controller constructor");
     };
-    $scope.EntryController();
+    $scope.Soft1Controller();
 }]);
 WechatBackupControllers.controller('Soft2Controller',["$scope","$state",function ($scope,$state) {
     $scope.page = "entry page";
-    $scope.dPath = "/Users/shidanlifuhetian/All/Tdevelop/WeChatData/data20170107/Documents";
-    $scope.wechatUserMD5 = "4ff9910cd14885aa373c45c4b7909ba7";
-    $scope.chatTableName = "Chat_165a100d5e335d624e3dba4d7cd555f9";
+    $scope.dPath = "";
+    $scope.wechatUserMD5 = "";
+    $scope.chatTableName = "";
     // $scope.outputLimit = 100;
     $scope.startDate = "";
     $scope.endDate = "";
@@ -645,7 +402,7 @@ WechatBackupControllers.controller('Soft2Controller',["$scope","$state",function
         videoFolder:""
     };
     $scope.targetPath={
-        rootFolder:"/Users/shidanlifuhetian/Desktop/output",
+        rootFolder:"",
         tmpFolder:"",
         audioFolder:"",
         imageFolder:"",
@@ -835,7 +592,7 @@ WechatBackupControllers.controller('Soft2Controller',["$scope","$state",function
         fs.mkdirSync($scope.targetPath.videoThumbnailFolder);
         try {
             fse.copySync("./framework/data.sqlite", $scope.targetPath.rootFolder+"/data.sqlite");//拷贝数据库
-            fse.copySync(path.join($scope.documentsPath.rootFolder,wechatUserMD5,"mmsetting.archive"),path.join($scope.targetPath.tmpFolder,"mmsetting.plist"));//
+            // fse.copySync(path.join($scope.documentsPath.rootFolder,wechatUserMD5,"mmsetting.archive"),path.join($scope.targetPath.tmpFolder,"mmsetting.plist"));//
         }catch (error){
             console.error(error);
         }
@@ -852,6 +609,7 @@ WechatBackupControllers.controller('Soft2Controller',["$scope","$state",function
             console.error(err)
         }
         // 2.5 获取当前用户信息
+        /*
         var command = "plutil -convert xml1 "+path.join($scope.targetPath.tmpFolder,"mmsetting.plist");
         require('child_process').execSync( command,{// child_process会调用sh命令，pc会调用cmd.exe命令
             encoding: "utf8"
@@ -864,6 +622,7 @@ WechatBackupControllers.controller('Soft2Controller',["$scope","$state",function
         var obj = plist.parse(fileContent);
         console.log("mmsetting");
         console.log(obj);
+        */
         //  3.连接mm.sqlite数据库
         var sqlite3 = require('sqlite3');
         // 打开一个sqlite数据库
@@ -979,17 +738,12 @@ WechatBackupControllers.controller('Soft2Controller',["$scope","$state",function
 }]);
 WechatBackupControllers.controller('Soft3Controller',["$scope","$state",function ($scope,$state) {
     $scope.page = "entry page";
-    $scope.outputPath = "/Users/shidanlifuhetian/All/output";
+    $scope.outputPath = "";
     $scope.goToChatDetailPage = function () {
         $state.go('chatDetail',{outputPath:$scope.outputPath});
 
     };
-    ///
 
-    // $scope.dPath = "/Users/shidanlifuhetian/All/Tdevelop/WeChatData/data20170107/Documents";
-    // $scope.wechatUserMD5 = "4ff9910cd14885aa373c45c4b7909ba7";
-    // $scope.chatTableName = "Chat_165a100d5e335d624e3dba4d7cd555f9";
-    // $scope.outputLimit = 100;
     $scope.documentsPath = {
         rootFolder:"",
         audioFolder:"",
