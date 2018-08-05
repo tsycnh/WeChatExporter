@@ -88,9 +88,9 @@ WechatBackup.config(["$stateProvider","$urlRouterProvider",function ($stateProvi
             '':{
                 templateUrl:"/templates/index.html"
             },
-            // 'topbar@chatList':{
-            //     templateUrl:"/templates/topbar.html"
-            // },
+            'topbar@chatList':{
+                templateUrl:"/templates/topbar.html"
+            },
             'main@chatList':{
                 templateUrl:"/templates/chatList.html"
             }

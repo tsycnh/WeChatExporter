@@ -1,10 +1,10 @@
 {
-  "name": "soft1",
-  "version": "0.0.1",
-  "description": "小美微信备份",
+  "name": "WechatExporter",
+  "version": "0.1",
+  "description": "微信备份",
   "main": "index.html",
   "window": {
-    "title": "小美微信备份",
+    "title": "微信备份",
     "icon": "logo",
     "position": "center",
     "toolbar": true,
