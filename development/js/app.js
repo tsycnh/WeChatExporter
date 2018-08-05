@@ -65,6 +65,21 @@ WechatBackup.config(["$stateProvider","$urlRouterProvider",function ($stateProvi
             }
         }
     };
+    var soft4State ={
+        name:"soft4",
+        url:"/soft4",
+        views:{
+            '':{
+                templateUrl:"/templates/index.html"
+            },
+            'topbar@soft4':{
+                templateUrl:"/templates/topbar.html"
+            },
+            'main@soft4':{
+                templateUrl:"/templates/soft4.html"
+            }
+        }
+    };
     // 显示聊天列表界面，选择待导出的聊天
     var chatListState = {
         name:"chatList",
@@ -73,9 +88,9 @@ WechatBackup.config(["$stateProvider","$urlRouterProvider",function ($stateProvi
             '':{
                 templateUrl:"/templates/index.html"
             },
-            'topbar@chatList':{
-                templateUrl:"/templates/topbar.html"
-            },
+            // 'topbar@chatList':{
+            //     templateUrl:"/templates/topbar.html"
+            // },
             'main@chatList':{
                 templateUrl:"/templates/chatList.html"
             }
@@ -84,35 +99,21 @@ WechatBackup.config(["$stateProvider","$urlRouterProvider",function ($stateProvi
     // 聊天详情页面
     var chatDetailState = {
         name:"chatDetail",
-        url:"/chatDetail/:outputPath",
+        url:"/chatDetail/:outputPath/:generateHtml/:showQqemoji",
+        params:{ship:null},
         views:{
             '':{
                 templateUrl:"/templates/index.html"
             },
-            'topbar@chatDetail':{
-                templateUrl:"/templates/topbar.html"
-            },
+            // 'topbar@chatDetail':{
+            //     templateUrl:"/templates/topbar.html"
+            // },
             'main@chatDetail':{
                 templateUrl:"/templates/chatDetail.html"
             }
         }
     };
-    // 教程页面
-    var tutorialState = {
-        name:"tutorial",
-        url:"/tutorial",
-        views:{
-            '':{
-                templateUrl:"/templates/index.html"
-            },
-            'topbar@tutorial':{
-                templateUrl:"/templates/topbar.html"
-            },
-            'main@tutorial':{
-                templateUrl:"/templates/tutorial.html"
-            }
-        }
-    };
+
 
     var newEntryState = {
         name:"newEntry",
@@ -147,13 +148,13 @@ WechatBackup.config(["$stateProvider","$urlRouterProvider",function ($stateProvi
     $stateProvider.state(soft1State);
     $stateProvider.state(soft2State);
     $stateProvider.state(soft3State);
+    $stateProvider.state(soft4State);
     $stateProvider.state(entryState);
     $stateProvider.state(chatListState);
-    $stateProvider.state(tutorialState);
     $stateProvider.state(chatDetailState);
     $stateProvider.state(newEntryState);
-
     // $stateProvider.state(testState);
+
 
 }])
 .run(["$rootScope","$state", "$stateParams",function($rootScope, $state, $stateParams) {

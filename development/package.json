@@ -8,7 +8,7 @@
     "icon": "logo",
     "position": "center",
     "toolbar": true,
-    "width": 1200,
+    "width": 800,
     "height": 800,
     "resizable": true,
     "show_in_taskbar": true,
@@ -25,7 +25,8 @@
     "js-md5": "^0.4.2",
     "sqlite3": "~3.1.8",
     "systeminformation": "^3.16.0",
-    "plist": "^2.0.1"
+    "plist": "^2.0.1",
+    "sqlite-sync": "^0.3.6"
   },
   "devDependencies": {
     "grunt": "~0.4.1",

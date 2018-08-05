@@ -60,10 +60,17 @@ li{
     background-color: #83f256 ;
     padding: 10px;
     border-radius: 10px;
+    max-width: 400px;
 }
 .zs-message-content-other{
     background-color: #ffffff;
 }
-#chat-window{
-    height:700px; overflow:scroll;
+.zs-message-content img{
+    max-width: 120px;
 }
+.zs-message-content video{
+    max-width: 240px;
+}
+/*#chat-window{*/
+    /*height:700px; overflow:scroll;*/
+/*}*/

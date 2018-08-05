@@ -1,0 +1,22 @@
+<div id="chat-window" class="row zs-chat-window" ng-controller="ChatDetailController">
+    <!--<input id="zs-scroll-input" ng-change="inputChange()" ng-model="scrollToBottom">scrollToBottom:{{scrollToBottom}}-->
+    <div class="row zs-message-wrapper" ng-repeat="(key,message) in chatData">
+        <div class="row">
+            <p class="zs-message-time" ng-show="{{message.time == ''?false:true }}" >{{message.time}}</p>
+        </div>
+        <div class="row">
+            <div class="col-md-1 col-sm-1 col-xs-1">
+                <img ng-show="{{message.owner == 0?'true':'false'}}" width="50" height="50" src="resources/me.jpg" alt="">
+            </div>
+            <div class="col-md-10 col-sm-10 col-xs-10 zs-message">
+                <div ng-bind-html = "message.content | trustHtml" class="zs-message-content {{message.owner == 1?'pull-right zs-message-content-me':'pull-left zs-message-content-other'}}">
+                </div>
+            </div>
+            <div class="col-md-1 col-sm-1 col-xs-1">
+                <div class="row">
+                    <img ng-show="{{message.owner == 1?'true':'false'}}" width="50" height="50" src="resources/other.jpg" alt="">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
