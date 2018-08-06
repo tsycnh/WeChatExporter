@@ -7,7 +7,11 @@
 
 使用方法：
 ### 一、准备工作
+Step1:数据导出：
 首先需要将微信聊天数据进行导出。目前只支持iOS系统，如果你用的是安卓机，可以尝试将聊天记录迁移到iPad上，再导出。
+
+Step2:安装nwjs（0.19.3版本）
+
 ### 二、运行软件
 
 Step1:下载项目 `git clone https://github.com/tsycnh/WeChatExporter`
@@ -16,7 +20,7 @@ Step2: `cd path/to/WeChatExporter`
 
 Step3: `cd development`
 
-Step4: `../nw/nwjs.app/Contents/MacOS/nwjs .`
+Step4: `/path/to/nw/nwjs.app/Contents/MacOS/nwjs .`
 
 即可运行导出工具。
 ### 三、使用软件
@@ -70,3 +74,8 @@ https://www.jianshu.com/p/07a8d87e698b
 3. soft1和soft2可以合并。
 
 4. soft4可以直接将grunt那一套拿过来即可
+
+-----
+第三方库版本
+nodejs 6.9.1
+nwjs   0.19.3
