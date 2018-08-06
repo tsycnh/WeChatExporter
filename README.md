@@ -18,7 +18,9 @@ Step1:数据导出：
 
 ![image](https://github.com/tsycnh/WeChatExporter/blob/master/imgs/for%20readme/backup2.png)
 
-Step2:安装nwjs（0.19.3版本） 官网：https://nwjs.io
+Step2:安装nodejs（6.9.1版本）
+
+Step3:安装nwjs（0.19.3版本） 官网：https://nwjs.io
 
 ### 二、运行软件
 
@@ -28,7 +30,11 @@ Step2: `cd path/to/WeChatExporter`
 
 Step3: `cd development`
 
-Step4: `/path/to/nw/nwjs.app/Contents/MacOS/nwjs .`
+Step4: `npm install`
+
+Step5: copy `framework/node-webkit-v0.19.3-darwin-x64` to `node_modules/.3.1.8@sqlite3/lib/binding`
+
+Step6: `/path/to/nw/nwjs.app/Contents/MacOS/nwjs .`
 
 即可运行导出工具。
 ### 三、使用软件
