@@ -8,7 +8,9 @@
 使用方法：
 ### 一、准备工作
 Step1:数据导出：
-首先需要将微信聊天数据进行导出。目前只支持iOS系统，如果你用的是安卓机，可以尝试将聊天记录迁移到iPad上，再导出。
+首先需要将微信聊天数据进行导出。目前只支持iOS系统，如果你用的是安卓机，可以尝试将聊天记录迁移到iPad上，再导出。  
+![image](https://github.com/tsycnh/WeChatExporter/blob/master/imgs/for%20readme/backup1.png)
+![image](https://github.com/tsycnh/WeChatExporter/blob/master/imgs/for%20readme/backup2.png)
 
 Step2:安装nwjs（0.19.3版本）
 
