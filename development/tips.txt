@@ -1,0 +1,26 @@
+/**
+ * Created by shidanlifuhetian on 2018/8/7.
+ */
+var source = require('vinyl-source-stream');
+
+var browserify = require('browserify');
+var b = browserify();
+b.add('./js/app.js');
+b.add('./js/controller.js');
+b.add('./js/directive.js');
+b.add('./js/filter.js');
+b.add('./js/funcs.js');
+b.bundle();
+
+browserify framework/jquery-3.1.1.min.js framework/angularjs-1.6.1/angular.js framework/angularjs-1.6.1/angular-sanitize.js framework/angularjs-1.6.1/angular-ui-router.js framework/bootstrap-3.3.7/js/bootstrap.js ./js/app.js ./js/controller.js ./js/directive.js ./js/filter.js ./js/funcs.js > bundle2.js
+
+
+------
+build sqlite3 给nwjs使用的sqlite3需要单独编译
+首先确保 /usr/local/bin/python 指向的是2.x版本的python，因为nw-gyp只支持python2版本
+然后编译
+npm install sqlite3 --build-from-source --runtime=node-webkit --target_arch=x64 --target=0.32.1 --registry=https://registry.npm.taobao.org
+然后就会在node_modules/sqlite3/lib/binding下生成所需文件
+------
+ncu用来查看package是否过期
+https://blog.csdn.net/u014027680/article/details/79238622

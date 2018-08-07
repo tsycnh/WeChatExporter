@@ -14,13 +14,13 @@ Step1:数据导出：
 
 ![image](https://github.com/tsycnh/WeChatExporter/blob/master/imgs/for%20readme/backup1.png)
 
-使用第三方软件导出微信备份数据，这里使用的是iMazing
+使用第三方软件导出微信备份数据，这里使用的是iMazing。导出Documents文件夹即可。
 
 ![image](https://github.com/tsycnh/WeChatExporter/blob/master/imgs/for%20readme/backup2.png)
 
-Step2:安装nodejs（6.9.1版本）
+Step2:安装nodejs（8.11.3版本）
 
-Step3:安装nwjs（0.19.3版本） 官网：https://nwjs.io
+Step3:安装nwjs（0.32.1版本） 官网：https://nwjs.io
 
 ### 二、运行软件
 
@@ -32,7 +32,7 @@ Step3: `cd development`
 
 Step4: `npm install`
 
-Step5: copy `framework/node-webkit-v0.19.3-darwin-x64` to `node_modules/.3.1.8@sqlite3/lib/binding`
+Step5: copy `framework/node-webkit-v0.32.1-darwin-x64` to `node_modules/sqlite3/lib/binding`
 
 Step6: `/path/to/nw/nwjs.app/Contents/MacOS/nwjs .`
 
@@ -99,5 +99,5 @@ https://www.jianshu.com/p/07a8d87e698b
 
 -----
 第三方库版本
-nodejs 6.9.1
-nwjs   0.19.3
+nodejs 8.11.3
+nwjs   0.32.1

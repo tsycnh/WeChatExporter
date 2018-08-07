@@ -27,7 +27,7 @@
     "js-md5": "^0.7.3",
     "plist": "^3.0.1",
     "sqlite-sync": "^0.3.6",
-    "sqlite3": "3.1.8",
+    "sqlite3": "^4.0.2",
     "systeminformation": "^3.16.0",
     "vinyl-source-stream": "^2.0.0"
   },
