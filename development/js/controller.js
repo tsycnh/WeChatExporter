@@ -177,8 +177,8 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
         });
     };
 
-    $scope.exportChat = function (tableName) {
-        $state.go('chatDetail',{tableName:tableName,sqliteFilePath:$stateParams.sqliteFilePath});
+    $scope.goToSoft2 = function (dpath,meMD5,otherMD5) {
+        $state.go('soft2',{documentsPath:dpath,meMD5:meMD5,otherMD5:otherMD5});
     }
 }]);
 
@@ -250,6 +250,7 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
                         break;
                     case 43:// 视频消息
                         message.content = $scope.templateImage(rows[i]);
+
                         break;
                     case 62:// 小视频消息
                         message.content = $scope.templateVideo(rows[i]);
@@ -319,14 +320,17 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
         return row.Message;
     };
     $scope.templateImage = function (row) {
+        console.log('处理图片开始')
         var fs = require('fs');
         var path = require('path');
-        var data = fs.readFileSync(path.join($scope.outputPath.imageThumbnailFolder,row.resourceUrl));
+        var data = fs.readFileSync(path.join($scope.outputPath.imageThumbnailFolder,row.resourceName));
         var imgTag = "<img>";
         if(data != undefined) {
             var a = data.toString("base64");
             imgTag = "<img src='data:image/jpeg;base64," + a + "'/>";
         }
+        console.log('处理图片结束')
+
         return imgTag;
     };
     $scope.templateAudio = function (row) {
@@ -388,11 +392,12 @@ WechatBackupControllers.controller('Soft1Controller',["$scope","$state",function
     };
     $scope.Soft1Controller();
 }]);
-WechatBackupControllers.controller('Soft2Controller',["$scope","$state",function ($scope,$state) {
+WechatBackupControllers.controller('Soft2Controller',["$scope","$state","$stateParams",function ($scope,$state,$stateParams) {
+    console.log($stateParams);
     $scope.page = "entry page";
-    $scope.dPath = "";
-    $scope.wechatUserMD5 = "";
-    $scope.chatTableName = "";
+    $scope.dPath = $stateParams.documentsPath;
+    $scope.wechatUserMD5 = $stateParams.meMD5;
+    $scope.chatTableName = $stateParams.otherMD5;
     // $scope.outputLimit = 100;
     $scope.startDate = "";
     $scope.endDate = "";
@@ -557,7 +562,10 @@ WechatBackupControllers.controller('Soft2Controller',["$scope","$state",function
         result.thumbnailName = path.basename(thumbnailTarget);
         return result;
     };
-    $scope.startGeneration = function (documentsPath, wechatUserMD5, chatTableName) {
+    $scope.startGeneration = function () {
+        documentsPath = $scope.dPath;
+        wechatUserMD5 = $scope.wechatUserMD5;
+        chatTableName = $scope.chatTableName;
         var fs = require("fs");
         var fse = require('fs-extra');
         var path = require("path");
@@ -735,10 +743,10 @@ WechatBackupControllers.controller('Soft2Controller',["$scope","$state",function
             });
 
     };
-    $scope.loadDocuments = function (documentsPath) {
-        console.log(documentsPath);
-        $state.go('chatList',{documentsPath:documentsPath});
-    };
+    // $scope.loadDocuments = function (documentsPath) {
+    //     console.log(documentsPath);
+    //     $state.go('chatList',{documentsPath:documentsPath});
+    // };
     $scope.EntryController = function () {
         console.log("entry controller constructor");
     };
@@ -760,7 +768,7 @@ WechatBackupControllers.controller('Soft3Controller',["$scope","$state",function
 
 
     $scope.Soft4Controller = function () {
-        console.log("entry soft4 controller constructor");
+        console.log("entry soft3 controller constructor");
     };
     $scope.Soft4Controller();
 }]);
