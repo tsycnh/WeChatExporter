@@ -5,6 +5,7 @@ WechatBackupControllers.controller('TopBarController',["$scope","$rootScope",fun
 WechatBackupControllers.controller('ChatListController',["$scope","$state", "$stateParams",function ($scope,$state, $stateParams) {
     $scope.wechatUserList = [];
     $scope.wechatUserSelected = "";
+    $scope.wechatUserInfo ={};
     $scope.dbTables = [];
     $scope.otherNickNames = {};
     $scope.totalTablesCount = -1;
@@ -13,12 +14,43 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
     $scope.filePath = "";
     $scope.documentsPath = $stateParams.documentsPath;
 
+
+    $scope.parseMmsetting = function (mmsettingPath) {
+        var fs = require('fs');
+        var plist = require('plist');
+        var command = "plutil -convert xml1 "+mmsettingPath;
+        //console.log("command:",command);
+        var stdOut = require('child_process').execSync( command,{// child_process会调用sh命令，pc会调用cmd.exe命令
+            encoding: "utf8"
+        } );
+
+        var content = fs.readFileSync(mmsettingPath, 'utf8');
+        var obj = plist.parse(content).$objects;
+        var headUrl = "";
+        // find headURL
+        for (var i=0;i<obj.length;i++){
+            if (typeof obj[i] == "string"){
+                var pos1 = obj[i].indexOf('http://wx.qlogo.cn/');
+                if (pos1==0 & obj[i].slice(-3)=='132'){
+                    // console.log(obj[i])
+                    headUrl = obj[i]
+                }
+            }
+        }
+        return {
+            nickname:   obj[3], //昵称
+            wechatID:   obj[19], //微信号
+            headUrl:    headUrl, //头像1
+        };
+    };
+
     // "构造函数"，页面载入的时候执行
     $scope.ChatListController = function () {
         console.log("constructor");
         console.log($stateParams);
         // 1. 查看当前目录下的所有文件
         var fs = require('fs');
+        var path = require('path');
         var documentsFileList = fs.readdirSync($scope.documentsPath);
         // 2. 找到符合md5格式的文件夹        // 3. 将这几个文件夹的显示在页面上
         for(var i=0;i<documentsFileList.length;i++)
@@ -27,19 +59,26 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
             if(documentsFileList[i].length == 32 && documentsFileList[i]!="00000000000000000000000000000000"){
                 console.log(documentsFileList[i]);
                 $scope.wechatUserList.push(documentsFileList[i]);
+                var mmsettingPath = path.join($scope.documentsPath,documentsFileList[i],'mmsetting.archive')
+                let myInfo = $scope.parseMmsetting(mmsettingPath)
+                $scope.wechatUserInfo[documentsFileList[i]] = myInfo
             }
         }
+        console.log($scope.wechatUserInfo)
     };
     // 执行"构造函数"
     $scope.ChatListController();
 
-    $scope.onFilesSelected = function(files) {
-        console.log("files - " + files);
-    };
+
+    // $scope.onFilesSelected = function(files) {
+    //     console.log("files - " + files);
+    // };
     $scope.onWechatUserMD5Selected = function(wechatUserMD5){
         console.log(wechatUserMD5);
-        $scope.wechatUserSelected = wechatUserMD5;
+        $scope.wechatUserSelected = $scope.wechatUserInfo[wechatUserMD5]
+        $scope.wechatUserSelected['md5'] = wechatUserMD5
         $scope.dbTables =[];
+        // var wechatUserNickname =
         // 1.   定位到当前目录的mmsqlite文件
         var sqlitefilePath = $scope.documentsPath + "/" + wechatUserMD5 + "/DB/MM.sqlite";
         var contactSqliteFilePath = $scope.documentsPath + "/" + wechatUserMD5 +"/DB/WCDB_Contact.sqlite";
@@ -146,9 +185,10 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
         });
     };
     // 用户在左侧选择了具体table
-    $scope.onChatTableSelected = function (tableName) {
+    $scope.onChatTableSelected = function (tableIndex) {
         //alert(tableName);
-        $scope.tableSelected = tableName;
+
+        $scope.tableSelected = {md5:$scope.dbTables[tableIndex][0],nickname:$scope.dbTables[tableIndex][2][0]};
         $scope.previewData = [];
         // sqlite3相关文档：https://github.com/mapbox/node-sqlite3/wiki/API
         var sqlite3 = require('sqlite3');
@@ -159,7 +199,7 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
             }
         });
 
-        var sql = "SELECT * FROM "+$scope.tableSelected+" order by CreateTime desc limit 10";
+        var sql = "SELECT * FROM "+$scope.tableSelected['md5']+" order by CreateTime desc limit 10";
         db.all(sql, function(err, rows) {
             for(var i in rows){
                 var time = formatTimeStamp(rows[i].CreateTime)
@@ -250,7 +290,6 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
                         break;
                     case 43:// 视频消息
                         message.content = $scope.templateImage(rows[i]);
-
                         break;
                     case 62:// 小视频消息
                         message.content = $scope.templateVideo(rows[i]);
@@ -320,7 +359,7 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
         return row.Message;
     };
     $scope.templateImage = function (row) {
-        console.log('处理图片开始')
+        // console.log('处理图片开始')
         var fs = require('fs');
         var path = require('path');
         var data = fs.readFileSync(path.join($scope.outputPath.imageThumbnailFolder,row.resourceName));
@@ -329,8 +368,7 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$
             var a = data.toString("base64");
             imgTag = "<img src='data:image/jpeg;base64," + a + "'/>";
         }
-        console.log('处理图片结束')
-
+        // console.log('处理图片结束')
         return imgTag;
     };
     $scope.templateAudio = function (row) {
