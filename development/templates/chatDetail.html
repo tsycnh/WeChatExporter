@@ -10,7 +10,9 @@
                             <span aria-hidden="true">&laquo;</span>
                         </a>
                     </li>
-                    <li ng-repeat="(key,pageIndex) in pageLink" ng-class="{'active':pageIndex == currentPage}"><a ng-click="goToPage(pageIndex)">{{pageIndex}}</a></li>
+                    <li ng-repeat="(key,pageIndex) in pageLink" ng-class="{'active':pageIndex == currentPage}">
+                        <a ng-click="goToPage(pageIndex)">{{pageIndex}}</a>
+                    </li>
                     <li ng-class="{'hidden':currentPage == totalPageCount}">
                         <a ng-click="goToPage(currentPage + 1)">
                             <span aria-hidden="true">&raquo;</span>

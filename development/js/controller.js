@@ -13,7 +13,7 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
     $scope.previewData = [];
     $scope.filePath = "";
     $scope.documentsPath = $stateParams.documentsPath;
-
+    $scope.messageLimit = 100;
 
     $scope.parseMmsetting = function (mmsettingPath) {
         var fs = require('fs');
@@ -157,7 +157,7 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
                 .then(function (result) {
                     db.get("select count(*) as count,MesSvrID as serverID from "+result[0],function (error, row) {
                         //console.log(row);
-                        if(!(row.count <= 100))
+                        if(!(row.count <= $scope.messageLimit))
                         {
                             // result[0] : table name // result[1] : table count
                             var currentChatterMd5 = getChatterMd5(result[0]);
@@ -218,199 +218,8 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
     };
 
     $scope.goToSoft2 = function (dpath,meMD5,otherMD5) {
-        $state.go('soft2',{documentsPath:dpath,meMD5:meMD5,otherMD5:otherMD5});
+        $state.go('soft2',{documentsPath:dpath,meInfo:JSON.stringify(meMD5),otherInfo:JSON.stringify(otherMD5)});
     }
-}]);
-
-// chatDetail.html页面的controller
-WechatBackupControllers.controller('ChatDetailController',["$scope","$state", "$stateParams",function ($scope, $state, $stateParams) {
-
-    $scope.outputPath={
-        rootFolder:"",
-        sqliteFile:"",
-        audioFolder:"",
-        imageFolder:"",
-        imageThumbnailFolder:"",
-        videoFolder:"",
-        videoThumbnailFolder:""
-    };
-
-    $scope.chatData = [];
-    $scope.scrollToBottom = -1;
-    $scope.count = 0;
-    $scope.db = {};             // 数据库
-    $scope.limitStart = 0;      // 加载起始位置（包含）
-    $scope.limitGap = 500;       // 每次加载limitGap条消息，默认50
-
-    $scope.lastTimeStamp = 0;
-    $scope.currentTimeStamp = 0;
-
-
-    //检测是否存在音频解码器
-    $scope.audioDecoderExist = function () {
-        var fs = require('fs');
-
-        if(!fs.existsSync($scope.audioFolderPath+"/converter.sh")) return false;
-        if(!fs.existsSync($scope.audioFolderPath+"/ffmpeg")) return false;
-        if(!fs.existsSync($scope.audioFolderPath+"/silk/decoder")) return false;
-        if(!fs.existsSync($scope.audioFolderPath+"/silk/libSKP_SILK_SDK.a")) return false;
-
-        return true;
-
-    };
-    // 加载聊天记录
-    $scope.loadMore = function () {
-
-        var sql = "SELECT * FROM ChatData order by CreateTime limit "+$scope.limitStart+","+$scope.limitGap;
-        console.log("laodMore sql:");
-        console.log(sql);
-        $scope.db.all(sql, function(err, rows) {
-            for (var i in rows){
-                var message = {
-                    owner:rows[i].Des,
-                    content:"",
-                    time:""
-                };
-                $scope.currentTimeStamp = rows[i].CreateTime;
-                if ($scope.currentTimeStamp - $scope.lastTimeStamp > 60*5)
-                {
-                    message.time = formatTimeStamp2($scope.currentTimeStamp);
-                }
-                $scope.lastTimeStamp = $scope.currentTimeStamp;
-                switch(rows[i].Type)
-                {
-                    case 1:// 文字消息
-                        message.content = $scope.templateMessage(rows[i]);
-                        break;
-                    case 3:// 图片消息
-                        message.content = $scope.templateImage(rows[i]);
-                        break;
-                    case 34:// 语音消息
-                        message.content = $scope.templateAudio(rows[i]);
-                        break;
-                    case 43:// 视频消息
-                        message.content = $scope.templateImage(rows[i]);
-                        break;
-                    case 62:// 小视频消息
-                        message.content = $scope.templateVideo(rows[i]);
-                        break;
-                    case 47:// 动画表情
-                        message.content = "[动画表情]";
-                        break;
-                    case 49:// 分享链接
-                        message.content = "[分享链接]";
-                        break;
-                    case 48:// 位置
-                        message.content = "[位置]";
-                        break;
-                    case 42:// 名片
-                        message.content = "[名片]";
-                        break;
-                    case 50:// 语音、视频电话
-                        message.content = "[语音、视频电话]";
-                        break;
-                    case 10000:
-                        message.content = "[系统消息]"
-                        break;
-                    default:
-                        message.content = "[未知消息类型：type id:"+rows[i].Type+"]";
-                }
-                $scope.chatData.push(message);
-            }
-            //$scope.chatData = rows;
-            //console.log("scope apply,chatData:",$scope.chatData);
-            $scope.$apply();
-            $scope.limitStart += $scope.limitGap;
-        });
-    };
-    // 构造函数
-    $scope.ChatDetailController = function () {
-        console.log("enter ChatDetailController");
-
-        var path = require('path');
-        var sqlite3 = require('sqlite3');
-
-        $scope.outputPath.rootFolder = $stateParams.outputPath;
-        $scope.outputPath.sqliteFile = path.join($scope.outputPath.rootFolder,"data.sqlite");
-        $scope.outputPath.audioFolder = path.join($scope.outputPath.rootFolder,"audio");
-        $scope.outputPath.imageFolder = path.join($scope.outputPath.rootFolder,"image");
-        $scope.outputPath.imageThumbnailFolder = path.join($scope.outputPath.rootFolder,"image","thumbnail");
-        $scope.outputPath.videoFolder = path.join($scope.outputPath.rootFolder,"video");
-        $scope.outputPath.videoThumbnailFolder = path.join($scope.outputPath.rootFolder,"video","thumbnail");
-        console.log($scope.outputPath);
-        //1.    打开sqlite数据库
-        //2.    按照limit规则，每按一次loadMore载入指定数量的消息
-        $scope.db = new sqlite3.Database($scope.outputPath.sqliteFile,sqlite3.OPEN_READONLY,function (error) {
-            if (error){console.log("Database error:",error);}
-        });
-        $scope.loadMore();// 载入数据库内容
-    };
-    $scope.ChatDetailController();
-    $scope.inputChange = function () {
-        console.log("input Change");
-    };
-    $scope.$watch('scrollToBottom',function (newValue,oldValue) {
-        $scope.count++;
-        console.log("angular detect scroll,count:",$scope.count);
-        console.log("new:",newValue," old:",oldValue);
-        //$scope.$apply();
-    });
-    $scope.templateMessage = function(row) {
-        return row.Message;
-    };
-    $scope.templateImage = function (row) {
-        // console.log('处理图片开始')
-        var fs = require('fs');
-        var path = require('path');
-        var data = fs.readFileSync(path.join($scope.outputPath.imageThumbnailFolder,row.resourceName));
-        var imgTag = "<img>";
-        if(data != undefined) {
-            var a = data.toString("base64");
-            imgTag = "<img src='data:image/jpeg;base64," + a + "'/>";
-        }
-        // console.log('处理图片结束')
-        return imgTag;
-    };
-    $scope.templateAudio = function (row) {
-        var fs = require('fs');
-        var path = require('path');
-        //var data = fs.readFileSync($scope.audioFolderPath+"/"+row.MesLocalID+".mp3");
-        var audioFilePath = path.join($scope.outputPath.audioFolder,row.resourceName);
-        //console.log(audioFilePath);
-        var audioTag = "<audio></audio>";
-        if(fs.existsSync(audioFilePath))// 若文件存在
-        {
-            audioTag = "<audio src='file://"+audioFilePath+"' controls='controls'></audio>";
-        }else{
-            audioTag = "[语音读取出错]";
-        }
-
-        return audioTag;
-    };
-    $scope.templateVideo = function (row) {
-        var fs = require('fs');
-        var path = require('path');
-        var videoFilePath = path.join($scope.outputPath.videoFolder,row.resourceName);
-        var videoTag = "<video></video>";
-        if(fs.existsSync(videoFilePath))// 若文件存在
-        {
-            videoTag = "<video src='file://"+videoFilePath+"' controls='controls'></video>";
-        }else{
-
-            var videoFileThumbnailPath = path.join($scope.outputPath.videoThumbnailFolder,row.thumbnailName);
-            console.log(videoFileThumbnailPath);
-            var data = fs.readFileSync(videoFileThumbnailPath);
-
-            if(data != undefined) {
-                var a = data.toString("base64");
-                videoTag = "<img src='data:image/jpeg;base64," + a + "'/>";
-            }
-            videoTag += "【视频不存在】";
-
-        }
-        return videoTag;
-    }
-
 }]);
 
 WechatBackupControllers.controller('Soft1Controller',["$scope","$state",function ($scope,$state) {
@@ -434,8 +243,10 @@ WechatBackupControllers.controller('Soft2Controller',["$scope","$state","$stateP
     console.log($stateParams);
     $scope.page = "entry page";
     $scope.dPath = $stateParams.documentsPath;
-    $scope.wechatUserMD5 = $stateParams.meMD5;
-    $scope.chatTableName = $stateParams.otherMD5;
+    var meInfo = JSON.parse($stateParams.meInfo);
+    var otherInfo = JSON.parse($stateParams.otherInfo);
+    $scope.wechatUserMD5 = meInfo['md5'];
+    $scope.chatTableName = otherInfo['md5'];
     // $scope.outputLimit = 100;
     $scope.startDate = "";
     $scope.endDate = "";
@@ -794,7 +605,7 @@ WechatBackupControllers.controller('Soft3Controller',["$scope","$state",function
     $scope.page = "entry page";
     $scope.outputPath = "";
     $scope.generateHtml = false;
-    $scope.showQqemoji = false;
+    $scope.showQqemoji = true;
     $scope.goToChatDetailPage = function () {
         $state.go('chatDetail',{
             outputPath:$scope.outputPath,
@@ -804,11 +615,10 @@ WechatBackupControllers.controller('Soft3Controller',["$scope","$state",function
         });
     };
 
-
-    $scope.Soft4Controller = function () {
+    $scope.Soft3Controller = function () {
         console.log("entry soft3 controller constructor");
     };
-    $scope.Soft4Controller();
+    $scope.Soft3Controller();
 }]);
 
 WechatBackupControllers.controller('NewEntryController',["$scope","$state",function ($scope,$state) {

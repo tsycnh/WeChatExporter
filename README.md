@@ -38,35 +38,31 @@ Step6: `/path/to/nw/nwjs.app/Contents/MacOS/nwjs .`
 
 即可运行导出工具。
 ### 三、使用软件
-目前工具由三部分组成：
+目前工具由两部分组成：
 
-soft1: 用来查看并确定要导出的聊天对象
+1.解析并导出数据
 
-soft2：用来导出并转换数据
-
-soft3：直接查看聊天内容
+2.直接查看聊天内容
 
 --------------
 
-Step1: 点击soft1进入分析模式，输入导出的Documents文件夹路径，然进入分析模式
+Step1: 点击开始原始数据分析按钮，然进入分析模式
 
 Step2: 左上角显示的是在当前手机上登陆过的微信帐号，点击任意一个将在左下角显示和你聊过天的朋友，默认只显示聊天消息总数超过100的朋友（或群聊）。
 
 Step3:点击左下角任意一聊天对象，会在右侧显示10条最近的聊天记录，以做确认之用。
 
-Step4:这时右上角会显示两串红色的字符，分别是你的微信账户和聊天对象（均经过MD5加密）。将这两个数值复制下来。
+Step4:这时右上角会显示某某与某某的聊天记录红色字符，点击下一步。
 
 ![image](https://github.com/tsycnh/WeChatExporter/blob/master/imgs/for%20readme/soft1.png)
 
-Step5:点击左上角微信备份按钮跳转到主页，点击Soft2 进入解析多媒体模式。
-
-Step6:按要求填写表单，日期区间可以控制导出聊天记录的时间范围，默认不填表示全部导出。然后点击开始生成数据。生成结束后会得到一个文件夹，即`path/to/output` 里面存放了所有需要的信息。至此Documents目录已经没有用了，可以删除。
+Step5:填写数据导出目录，日期区间可以控制导出聊天记录的时间范围，默认不填表示全部导出。然后点击开始生成数据。生成结束后会得到一个文件夹，即`path/to/output` 里面存放了所有需要的信息。至此Documents目录已经没有用了，可以删除。
 
 ![image](https://github.com/tsycnh/WeChatExporter/blob/master/imgs/for%20readme/soft2.png)
 
-Step7:回到主页进入Soft3 页面，输入刚到导出的output目录，即可开始查看导出的聊天记录了。
+Step6:点击左上角为微信备份回到主页点击显示聊天记录，输入刚到导出的output目录，即可开始查看导出的聊天记录了。
 
-之后再查看直接进入Soft3页面即可。
+之后再查看直接进入显示聊天记录页面即可。
 
 ![image](https://github.com/tsycnh/WeChatExporter/blob/master/imgs/for%20readme/soft3.png)
 

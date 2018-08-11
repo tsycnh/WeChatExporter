@@ -22,7 +22,7 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
     $scope.count = 0;
     $scope.db = {};             // 数据库
     $scope.limitStart = 0;      // 加载起始位置（包含）
-    $scope.limitGap = 1000;       // 每次加载limitGap条消息，默认50,即每页显示多少条信息
+    $scope.limitGap = 500;       // 每次加载limitGap条消息，默认50,即每页显示多少条信息
 
     $scope.lastTimeStamp = 0;       // 前一条消息的时间戳
     $scope.currentTimeStamp = 0;    // 当前一条消息的时间戳
@@ -93,6 +93,9 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
                         break;
                     case 50:// 语音、视频电话
                         message.content = "[语音、视频电话]";
+                        break;
+                    case 10000:// 语音、视频电话
+                        message.content = "[系统消息]";
                         break;
                     default:
                         message.content = "[未知消息类型：type id:"+rows[i].Type+"]";
