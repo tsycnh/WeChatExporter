@@ -7,6 +7,7 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
     $scope.outputPath={
         rootFolder:"",
         sqliteFile:"",
+        resourceFolder:"",
         audioFolder:"",
         imageFolder:"",
         imageThumbnailFolder:"",
@@ -18,6 +19,8 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
     $scope.chatData = [];
     $scope.pageLink = [];
     $scope.qqEmoji = {};
+    $scope.meInfo = {};
+    $scope.otherInfo = {};
     $scope.scrollToBottom = -1;
     $scope.count = 0;
     $scope.db = {};             // 数据库
@@ -212,6 +215,9 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
         $scope.outputPath.imageThumbnailFolder = path.join($scope.outputPath.rootFolder,"image","thumbnail");
         $scope.outputPath.videoFolder = path.join($scope.outputPath.rootFolder,"video");
         $scope.outputPath.videoThumbnailFolder = path.join($scope.outputPath.rootFolder,"video","thumbnail");
+        $scope.outputPath.resourceFolder = path.join($scope.outputPath.rootFolder,"resource");
+
+        $scope.meInfo['headPath'] = path.join('file://',$scope.outputPath.resourceFolder,'me.png')
         console.log($scope.outputPath);
 
         //- 打开sqlite数据库

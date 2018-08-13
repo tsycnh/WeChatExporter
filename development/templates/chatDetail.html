@@ -41,7 +41,7 @@
             </div>
             <div class="col-md-1 col-sm-1 col-xs-1 text-left">
                 <div class="row">
-                    <img ng-show="{{message.owner == 0?'true':'false'}}" width="50" height="50" src="resources/me.jpg" alt="">
+                    <img ng-show="{{message.owner == 0?'true':'false'}}" width="50" height="50" src="{{meInfo.headPath}}" alt="">
                     <img ng-show="{{message.owner == 0?'false':'true'}}" width="50" height="50" src="resources/empty.png" alt="">
                 </div>
             </div>

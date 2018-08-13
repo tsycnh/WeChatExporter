@@ -243,10 +243,10 @@ WechatBackupControllers.controller('Soft2Controller',["$scope","$state","$stateP
     console.log($stateParams);
     $scope.page = "entry page";
     $scope.dPath = $stateParams.documentsPath;
-    var meInfo = JSON.parse($stateParams.meInfo);
-    var otherInfo = JSON.parse($stateParams.otherInfo);
-    $scope.wechatUserMD5 = meInfo['md5'];
-    $scope.chatTableName = otherInfo['md5'];
+    $scope.meInfo = JSON.parse($stateParams.meInfo);
+    $scope.otherInfo = JSON.parse($stateParams.otherInfo);
+    $scope.wechatUserMD5 = $scope.meInfo['md5'];
+    $scope.chatTableName = $scope.otherInfo['md5'];
     // $scope.outputLimit = 100;
     $scope.startDate = "";
     $scope.endDate = "";
@@ -261,6 +261,7 @@ WechatBackupControllers.controller('Soft2Controller',["$scope","$state","$stateP
     $scope.targetPath={
         rootFolder:"",
         tmpFolder:"",
+        resourceFolder:"",
         audioFolder:"",
         imageFolder:"",
         imageThumbnailFolder:"",
@@ -434,6 +435,7 @@ WechatBackupControllers.controller('Soft2Controller',["$scope","$state","$stateP
         var sqliteFilePath = documentsPath+"/"+wechatUserMD5+"/DB/MM.sqlite";
         //$scope.targetPath.rootFolder = path.join(path.dirname(process.mainModule.filename),"output");
         $scope.targetPath.tmpFolder = path.join($scope.targetPath.rootFolder,".tmp");
+        $scope.targetPath.resourceFolder = path.join($scope.targetPath.rootFolder,"resource");
         $scope.targetPath.audioFolder = path.join($scope.targetPath.rootFolder,"audio");
         $scope.targetPath.imageFolder = path.join($scope.targetPath.rootFolder,"image");
         $scope.targetPath.imageThumbnailFolder = path.join($scope.targetPath.rootFolder,"image","thumbnail");
@@ -444,6 +446,7 @@ WechatBackupControllers.controller('Soft2Controller',["$scope","$state","$stateP
         //  1. 建立输出文件夹
 
         fse.emptyDirSync($scope.targetPath.rootFolder);// 保证output文件夹为空，不为空则清空，不存在则创建
+        fs.mkdirSync($scope.targetPath.resourceFolder)
         fs.mkdirSync($scope.targetPath.audioFolder);
         fs.mkdirSync($scope.targetPath.tmpFolder);
         fs.mkdirSync($scope.targetPath.imageFolder);
@@ -468,26 +471,21 @@ WechatBackupControllers.controller('Soft2Controller',["$scope","$state","$stateP
         } catch (err) {
             console.error(err)
         }
-        // 2.5 获取当前用户信息
-        /*
-        var command = "plutil -convert xml1 "+path.join($scope.targetPath.tmpFolder,"mmsetting.plist");
-        require('child_process').execSync( command,{// child_process会调用sh命令，pc会调用cmd.exe命令
-            encoding: "utf8"
-        } );
-        var plist = require('plist');
+        // 2.5 存储用户信息
+        let buffer = {meInfo:$scope.meInfo,otherInfo:$scope.otherInfo};
+        fs.writeFile(path.join($scope.targetPath.resourceFolder,'userData.json'), JSON.stringify(buffer), (err) => {
+            if (err) throw err;
+            console.log('The user data has been saved!');
+        });
+        // 2.6 存储图像
+        let request = require("request");
+        request($scope.meInfo['headUrl']).pipe(fs.createWriteStream(path.join($scope.targetPath.resourceFolder,'me.png')));
 
-        var fileContent = fs.readFileSync(path.join($scope.targetPath.tmpFolder,"mmsetting.plist"),"utf8");
-        //console.log(fileContent);
-
-        var obj = plist.parse(fileContent);
-        console.log("mmsetting");
-        console.log(obj);
-        */
         //  3.连接mm.sqlite数据库
-        var sqlite3 = require('sqlite3');
+        let sqlite3 = require('sqlite3');
         // 打开一个sqlite数据库
         console.log(sqliteFilePath);
-        var db = new sqlite3.Database(sqliteFilePath,sqlite3.OPEN_READONLY,function (error) {
+        var originDb = new sqlite3.Database(sqliteFilePath,sqlite3.OPEN_READONLY,function (error) {
             if (error){
                 console.log("Database error:",error);
             }
@@ -508,7 +506,7 @@ WechatBackupControllers.controller('Soft2Controller',["$scope","$state","$stateP
         console.log("generate sql: ",sql);
         var index = 1;
         //  5.逐条数据库信息获取
-        db.each(sql,
+        originDb.each(sql,
             function (error,row) {
                 // 回调函数，每获取一个条目，执行一次，第二个参数为当前条目
                 var message = {
@@ -592,14 +590,11 @@ WechatBackupControllers.controller('Soft2Controller',["$scope","$state","$stateP
             });
 
     };
-    // $scope.loadDocuments = function (documentsPath) {
-    //     console.log(documentsPath);
-    //     $state.go('chatList',{documentsPath:documentsPath});
-    // };
-    $scope.EntryController = function () {
-        console.log("entry controller constructor");
+
+    $scope.Soft2Controller = function () {
+        console.log("entry soft2 controller constructor");
     };
-    $scope.EntryController();
+    $scope.Soft2Controller();
 }]);
 WechatBackupControllers.controller('Soft3Controller',["$scope","$state",function ($scope,$state) {
     $scope.page = "entry page";
@@ -648,18 +643,6 @@ function formatTimeStamp(timeStamp) {
     var mm = time.getMinutes();
     var s = time.getSeconds();
     return y+'-'+add0(m)+'-'+add0(d)+'-'+add0(h)+'-'+add0(mm)+'-'+add0(s);
-
-}
-function formatTimeStamp2(timeStamp) {
-    var time = new Date(timeStamp*1000);
-    var y = time.getFullYear();
-    var m = time.getMonth()+1;
-    var d = time.getDate();
-    var h = time.getHours();
-    var mm = time.getMinutes();
-    var s = time.getSeconds();
-    return y+'-'+add0(m)+'-'+add0(d)+' '+add0(h)+':'+add0(mm)+':'+add0(s);
-
 }
 
 // 获取目录路径,返回值包括斜线形如："/abc/bsd/to/"
