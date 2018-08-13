@@ -7,6 +7,7 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
     $scope.wechatUserSelected = "";
     $scope.wechatUserInfo ={};
     $scope.dbTables = [];
+    $scope.isChatRoom = [];
     $scope.otherNickNames = {};
     $scope.totalTablesCount = -1;
     $scope.tableSelected = "";
@@ -74,6 +75,8 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
     //     console.log("files - " + files);
     // };
     $scope.onWechatUserMD5Selected = function(wechatUserMD5){
+        var sqlite3 = require('sqlite3');
+
         console.log(wechatUserMD5);
         $scope.wechatUserSelected = $scope.wechatUserInfo[wechatUserMD5]
         $scope.wechatUserSelected['md5'] = wechatUserMD5
@@ -82,8 +85,6 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
         // 1.   定位到当前目录的mmsqlite文件
         var sqlitefilePath = $scope.documentsPath + "/" + wechatUserMD5 + "/DB/MM.sqlite";
         var contactSqliteFilePath = $scope.documentsPath + "/" + wechatUserMD5 +"/DB/WCDB_Contact.sqlite";
-
-        var sqlite3 = require('sqlite3');
 
         var contactDb = new sqlite3.Database(contactSqliteFilePath,sqlite3.OPEN_READONLY,function (error) {
             if (error){
@@ -96,8 +97,10 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
             var md5 = require('js-md5');
 
             var nameMd5 = md5(row.userName);
-            //console.log(row.userName,nameMd5);
-            $scope.otherNickNames[nameMd5] = {wechatID:row.userName,nickName:getNickName(Utf8ArrayToStr(row.dbContactRemark))};
+            $scope.otherNickNames[nameMd5] = {
+                wechatID:row.userName,
+                nickName:getNickName(Utf8ArrayToStr(row.dbContactRemark))
+            };
 
             //console.log(row.dbContactRemark);
             //console.log(Utf8ArrayToStr(row.dbContactRemark));
@@ -119,8 +122,7 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
         console.log("nickNames Size:",$scope.otherNickNames.length);
         // 查找数据库内的所有table，并逐个遍历
         db.each("select * from SQLITE_MASTER where type = 'table' and name like 'Chat/_%' ESCAPE '/' ;",function (error,row) {
-            // 回调函数，没获取一个条目，执行一次，第二个参数为当前条目
-
+            // 回调函数，每获取一个条目，执行一次，第二个参数为当前条目
             // 声明一个promise，将条目的name传入resolve
             var getRowName = new Promise(function (resolve,reject) {
                 if(!error)
@@ -133,7 +135,6 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
             // 声明一个带参数的promise，写法和getRowName略有不同
             var getCount = function (rowName) {
                 var promise = new Promise(function (resolve,reject) {
-                    ///
                     var sql = "select count(*) as count from "+ rowName;
                     var r = db.get(sql,function (error,result) {
                         if(!error) {
@@ -146,7 +147,6 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
                             reject(error)
                         }
                     });
-                    ///
                 });
                 return promise;
             };
@@ -163,10 +163,15 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
                             var currentChatterMd5 = getChatterMd5(result[0]);
                             //result.push(currentChatterMd5);
                             //console.log("nickNames Size here:",$scope.otherNickNames);
-                            console.log("rowName:",result[0],"count:",result[1]," md5:",currentChatterMd5," user Name:",$scope.otherNickNames[currentChatterMd5].nickName);
+                            console.log("rowName:",result[0],"count:",result[1]," md5:",currentChatterMd5," nickname:",$scope.otherNickNames[currentChatterMd5].nickName,"userName: ",$scope.otherNickNames[currentChatterMd5].wechatID);
                             result.push($scope.otherNickNames[currentChatterMd5].nickName);
 
                             $scope.dbTables.push(result);
+                            if ($scope.otherNickNames[currentChatterMd5].wechatID.indexOf('@chatroom') == -1){
+                                $scope.isChatRoom[currentChatterMd5]=false
+                            }else{
+                                $scope.isChatRoom[currentChatterMd5]=true
+                            }
                             // if($scope.dbTables.length == $scope.totalTablesCount){
                             //     console.log("scope apply1,tables count:",$scope.dbTables.length)
                             //     $scope.$apply();
