@@ -70,7 +70,6 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
     // 执行"构造函数"
     $scope.ChatListController();
 
-
     // $scope.onFilesSelected = function(files) {
     //     console.log("files - " + files);
     // };
@@ -191,9 +190,13 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
     };
     // 用户在左侧选择了具体table
     $scope.onChatTableSelected = function (tableIndex) {
-        //alert(tableName);
-
-        $scope.tableSelected = {md5:$scope.dbTables[tableIndex][0],nickname:$scope.dbTables[tableIndex][2][0]};
+        console.log('isChatroom: ',$scope.isChatRoom);
+        console.log($scope.dbTables[tableIndex])
+        $scope.tableSelected = {
+            md5:$scope.dbTables[tableIndex][0],
+            nickname:$scope.dbTables[tableIndex][2][0],
+            isChatRoom:$scope.isChatRoom[$scope.dbTables[tableIndex][0].split('_')[1]]
+        };
         $scope.previewData = [];
         // sqlite3相关文档：https://github.com/mapbox/node-sqlite3/wiki/API
         var sqlite3 = require('sqlite3');
@@ -209,21 +212,20 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
             for(var i in rows){
                 var time = formatTimeStamp(rows[i].CreateTime)
                 //console.log(time);
-
                 $scope.previewData.push({
                     time:time,
                     message:rows[i].Message
                 })
             }
             //console.log("scope apply,previewData count:",$scope.previewData.length)
-
             $scope.$apply();
-
         });
     };
 
-    $scope.goToSoft2 = function (dpath,meMD5,otherMD5) {
-        $state.go('soft2',{documentsPath:dpath,meInfo:JSON.stringify(meMD5),otherInfo:JSON.stringify(otherMD5)});
+    $scope.goToSoft2 = function (dpath,weChatUserSelected,tableSelected) {
+        $state.go('soft2',{documentsPath:dpath,
+            meInfo:JSON.stringify(weChatUserSelected),
+            otherInfo:JSON.stringify(tableSelected)});
     }
 }]);
 
@@ -273,6 +275,7 @@ WechatBackupControllers.controller('Soft2Controller',["$scope","$state","$stateP
         videoFolder:"",
         videoThumbnailFolder:""
     };
+    $scope.info = "";
 
     $scope.onFileChange = function (files) {
         console.log(files);
@@ -418,6 +421,7 @@ WechatBackupControllers.controller('Soft2Controller',["$scope","$state","$stateP
         return result;
     };
     $scope.startGeneration = function () {
+        $scope.info = "数据解析中，请稍候...";
         documentsPath = $scope.dPath;
         wechatUserMD5 = $scope.wechatUserMD5;
         chatTableName = $scope.chatTableName;
@@ -589,8 +593,14 @@ WechatBackupControllers.controller('Soft2Controller',["$scope","$state","$stateP
                 if(!error){
                     $scope.totalTablesCount = result;
                     console.log("completed total tables Count:",result);
+                    $scope.info = "数据解析完成,存储在："+$scope.targetPath.rootFolder;
+                    $scope.$apply();
+                    alert('数据解析完成！')
                 }else{
                     console.log("complete error:",error);
+                    $scope.info = "数据解析失败 ："+error;
+                    $scope.$apply();
+                    // alert('数据解析失败！ '+error)
                 }
             });
 
