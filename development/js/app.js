@@ -37,7 +37,7 @@ WechatBackup.config(["$stateProvider","$urlRouterProvider",function ($stateProvi
     };
     var soft2State ={
         name:"soft2",
-        url:"/soft2/:documentsPath/:meInfo/:otherInfo",
+        url:"/soft2/:documentsPath/:meInfo/:otherInfo/:roomInfo",
         views:{
             '':{
                 templateUrl:"/templates/index.html"
