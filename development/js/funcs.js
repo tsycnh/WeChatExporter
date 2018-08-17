@@ -44,7 +44,6 @@ function getChatterMd5(tableName) {
     return sep.pop();
 
 }
-
 function imageToBase64(imgFile) {
     var fs = require('fs');
     var path = require('path');
@@ -56,3 +55,16 @@ function imageToBase64(imgFile) {
     }
     return imgTag;
 }
+var hex_to_utf8 = function (hex_string) {
+    // a string like "e7be8ee7be8ee7be8ee985b1f09f9088"
+    var chars=[]
+    for (var i=0; i<hex_string.length; i+=2){
+        var cur_hex = hex_string.substr(i,2)
+        var cur_dec = parseInt(cur_hex,16)
+        var cur_char = String.fromCharCode(cur_dec)
+        chars.push(cur_char)
+    }
+    //convert to unicode first
+    let utf8 = require('utf8')
+    return utf8.decode(chars.join(''))
+};
