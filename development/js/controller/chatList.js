@@ -231,12 +231,17 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
 
     };
     $scope.addOtherChattersInfo = function () {
+        console.log("Enter addOtherChattersInfo")
         var sqlite3 = require('sqlite3');
+        var fs = require('fs')
         $scope.currentFriend = $scope.myFriends[getChatterMd5($scope.tableSelected['md5'])];
 
         if ($scope.tableSelected.isChatRoom){
+            console.log("群组聊天")
+
             //群组聊天
         }else{
+            console.log("一对一聊天")
             //一对一聊天
             var meMD5 = $scope.meInfo['md5']
             var contactSqliteFilePath = $scope.documentsPath + "/" + meMD5 +"/DB/WCDB_Contact.sqlite";
@@ -245,19 +250,27 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
                     console.log("Database error:",error);
                 }
             });
-            var sql = "select dbContactHeadImage from Friend where userName is '"+$scope.currentFriend.wechatID+"';";
+            var sql = "select dbContactHeadImage,lower(quote(dbContactRemark)) as cr from Friend where userName is '"+$scope.currentFriend.wechatID+"';";
            contactDb.get(sql,function (err, row) {
                console.log('other detail:',row)
                console.log(row.dbContactHeadImage.toString('utf8'))
+               console.log(row.cr)
                var tmp = row.dbContactHeadImage.toString('utf8')
                var i = tmp.indexOf("/132")
                var b = tmp.slice(0,i+4)
                var i2 = b.indexOf('http:')
                var c = b.slice(i2)
+               var user_name = decode_user_name_info(row.cr)
+               console.log(user_name)
+               // fs.writeFile('./contact remark.txt', row.dbContactRemark, (err) => {
+               //     if (err) throw err;
+               //     console.log('The file has been saved!');
+               // });
+               // var nn2 = getNickName(t)
                $scope.otherInfo[$scope.currentFriend.wechatID]={
                    wechatID:$scope.currentFriend.wechatID,
                    headUrl:c,
-                   nickName:""
+                   nickName:user_name//getNickName(row.dbContactRemark)
                }
            })
         }
