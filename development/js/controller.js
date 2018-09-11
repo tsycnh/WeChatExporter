@@ -232,7 +232,7 @@ WechatBackupControllers.controller('Soft2Controller',["$scope","$state","$stateP
         //  1. 建立输出文件夹
 
         fse.emptyDirSync($scope.targetPath.rootFolder);// 保证output文件夹为空，不为空则清空，不存在则创建
-        fs.mkdirSync($scope.targetPath.resourceFolder)
+        fs.mkdirSync($scope.targetPath.resourceFolder);
         fs.mkdirSync($scope.targetPath.audioFolder);
         fs.mkdirSync($scope.targetPath.tmpFolder);
         fs.mkdirSync($scope.targetPath.imageFolder);

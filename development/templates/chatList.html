@@ -19,7 +19,7 @@
                     <th>聊天消息总数</th>
                 </tr>
                 <tr ng-repeat="(key, value) in dbTables" ng-click="onChatTableSelected(key)" >
-                    <td>{{value[2][0]}}</td>
+                    <td>{{value[2].nickname}}</td>
                     <!--<td>{{value[0]}}</td>-->
                     <td>{{value[1]}}</td>
                 </tr>

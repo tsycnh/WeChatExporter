@@ -72,9 +72,6 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
     // 执行"构造函数"
     $scope.ChatListController();
 
-    // $scope.onFilesSelected = function(files) {
-    //     console.log("files - " + files);
-    // };
     $scope.onWechatUserMD5Selected = function(wechatUserMD5){
         var sqlite3 = require('sqlite3');
 
@@ -93,18 +90,17 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
             }
         });
 
-        contactDb.each("select * from Friend;",function (error,row) {
+        contactDb.each("select *,lower(quote(dbContactRemark)) as cr from Friend;",function (error,row) {
             // 回调函数，每获取一个条目，执行一次，第二个参数为当前条目
             var md5 = require('js-md5');
 
             var nameMd5 = md5(row.userName);
             $scope.myFriends[nameMd5] = {
                 wechatID:row.userName,
-                nickName:getNickName(Utf8ArrayToStr(row.dbContactRemark))
+                rawNameInfo:row.cr//如果是chatroom，那么nameInfo.nickname就是房间名，如果不是chatroom，nameInfo.nickname就是对方昵称
             };
 
-            //console.log(row.dbContactRemark);
-            //console.log(Utf8ArrayToStr(row.dbContactRemark));
+
         },function (error, result) {
             console.log('names over:',result);
             console.log('names size:',$scope.myFriends.length);
@@ -167,9 +163,9 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
                             console.log("rowName:",result[0],
                                 "count:",result[1],
                                 " md5:",currentChatterMd5,
-                                " nickname:",$scope.myFriends[currentChatterMd5].nickName,
-                                "userName: ",$scope.myFriends[currentChatterMd5].wechatID);
-                            result.push($scope.myFriends[currentChatterMd5].nickName);
+                                " nameInfo:",decode_user_name_info($scope.myFriends[currentChatterMd5].rawNameInfo),
+                                " wechatID: ",$scope.myFriends[currentChatterMd5].wechatID);
+                            result.push(decode_user_name_info($scope.myFriends[currentChatterMd5].rawNameInfo));
 
                             $scope.dbTables.push(result);
                             if ($scope.myFriends[currentChatterMd5].wechatID.indexOf('@chatroom') == -1){
@@ -270,7 +266,7 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
                $scope.otherInfo[$scope.currentFriend.wechatID]={
                    wechatID:$scope.currentFriend.wechatID,
                    headUrl:c,
-                   nickName:user_name//getNickName(row.dbContactRemark)
+                   nameInfo:user_name//getNickName(row.dbContactRemark)
                }
            })
         }
