@@ -173,10 +173,6 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
                             }else{
                                 $scope.isChatRoom[currentChatterMd5]=true
                             }
-                            // if($scope.dbTables.length == $scope.totalTablesCount){
-                            //     console.log("scope apply1,tables count:",$scope.dbTables.length)
-                            //     $scope.$apply();
-                            // }
                         }
                         $scope.$apply();
                     });
@@ -197,7 +193,7 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
         $scope.tableSelected = {
             md5:getChatterMd5($scope.dbTables[tableIndex][0]),
             tableName:$scope.dbTables[tableIndex][0],
-            roomName:$scope.dbTables[tableIndex][2][0],
+            roomName:$scope.dbTables[tableIndex][2].nickname,
             isChatRoom:$scope.isChatRoom[$scope.dbTables[tableIndex][0].split('_')[1]]
         };
         $scope.previewData = [];
@@ -234,7 +230,6 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
 
         if ($scope.tableSelected.isChatRoom){
             console.log("群组聊天")
-
             //群组聊天
         }else{
             console.log("一对一聊天")
@@ -258,11 +253,7 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
                var c = b.slice(i2)
                var user_name = decode_user_name_info(row.cr)
                console.log(user_name)
-               // fs.writeFile('./contact remark.txt', row.dbContactRemark, (err) => {
-               //     if (err) throw err;
-               //     console.log('The file has been saved!');
-               // });
-               // var nn2 = getNickName(t)
+
                $scope.otherInfo[$scope.currentFriend.wechatID]={
                    wechatID:$scope.currentFriend.wechatID,
                    headUrl:c,
@@ -278,33 +269,5 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
             otherInfo:JSON.stringify($scope.otherInfo),
             roomInfo:JSON.stringify($scope.tableSelected)
         });
-        /*
-        * {
-         "meInfo": {
-             "nickname": "",
-             "wechatID": "",
-             "headUrl": "",
-             "md5": "4ff9910cd14885aa373c45c4b7909ba7"
-             },
-         "otherInfo": {
-             "wxid_53lvynmdwu9x22":{
-             "wechatID": "wxid_53lvynmdwu9x22",
-             "nickName": ["\n\t马小江\u0012\u0000\u001a\u0000"]
-             "hearUrl": ""
-             },
-             {
-             }
-         },
-         "roomInfo":{
-                "tableName":"Chat_f91b322ba073c8414b68060660ac893c"
-                "md5":"f91b322ba073c8414b68060660ac893c"
-                "isChatRoom":true,
-                "roomName":""
-             }
-         }
-        *
-        *
-        *
-        * */
     }
 }]);
