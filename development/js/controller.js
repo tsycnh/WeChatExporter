@@ -393,11 +393,13 @@ WechatBackupControllers.controller('Soft3Controller',["$scope","$state",function
     $scope.outputPath = "";
     $scope.generateHtml = false;
     $scope.showQqemoji = true;
+    $scope.linesPerPage = 100;
     $scope.goToChatDetailPage = function () {
         $state.go('chatDetail',{
             outputPath:$scope.outputPath,
             generateHtml:$scope.generateHtml,
             showQqemoji:$scope.showQqemoji,
+            linesPerPage:$scope.linesPerPage,
             ship:{a:"aa",b:"bb"}
         });
     };

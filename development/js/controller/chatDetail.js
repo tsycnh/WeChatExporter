@@ -44,7 +44,6 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
         if(!fs.existsSync($scope.audioFolderPath+"/silk/libSKP_SILK_SDK.a")) return false;
 
         return true;
-
     };
     // 加载聊天记录
     $scope.loadMore = function () {
@@ -203,6 +202,7 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
         console.log($stateParams);
         $scope.generateHtml = $stateParams.generateHtml;
         $scope.showQqemoji = $stateParams.showQqemoji;
+        $scope.limitGap = $stateParams.linesPerPage;
         var path = require('path');
         var sqlite3 = require('sqlite3');
         var fse = require('fs-extra');
@@ -352,5 +352,9 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
         var fs = require('fs-extra');
         var markup = document.documentElement.outerHTML;
         fs.writeFileSync("../distHtml/index_"+$scope.currentPage+".html",markup);
+    };
+
+    $scope.on_message_click = function(){
+        console.log("message clicked!");
     };
 }]);

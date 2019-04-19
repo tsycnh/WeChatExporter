@@ -99,7 +99,7 @@ WechatBackup.config(["$stateProvider","$urlRouterProvider",function ($stateProvi
     // 聊天详情页面
     var chatDetailState = {
         name:"chatDetail",
-        url:"/chatDetail/:outputPath/:generateHtml/:showQqemoji",
+        url:"/chatDetail/:outputPath/:generateHtml/:showQqemoji/:linesPerPage",
         params:{ship:null},
         views:{
             '':{
