@@ -38,7 +38,7 @@
             <div class="col-md-10 col-sm-10 col-xs-10 zs-message">
                 <div ng-bind-html = "message.content | trustHtml"
                      class="zs-message-content {{message.owner == 0?'pull-right zs-message-content-me':'pull-left zs-message-content-other'}}"
-                     ng-click="on_message_click()"
+                     ng-click="on_message_click(message)"
                 >
                 </div>
             </div>
@@ -50,7 +50,6 @@
             </div>
         </div>
     </div>
-
 
     <div class="row" ng-show="{{generateHtml == 'true'?false:true}}">
         <div class="col-md-4 col-sm-10 col-sm-offset-1 col-md-offset-4">

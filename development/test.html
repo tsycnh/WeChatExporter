@@ -1,9 +1,27 @@
 <!DOCTYPE html>
 <html>
-<>
-<img src="/Users/shidanlifuhetian/All/Tdevelop/微信备份数据库/微信2017年01月07日备份/Documents/4ff9910cd14885aa373c45c4b7909ba7/Img/165a100d5e335d624e3dba4d7cd555f9/15091.jpg">
-<img src="/Users/shidanlifuhetian/Desktop/15091.jpg">
-<img src="file:///Users/shidanlifuhetian/Desktop/15091.jpg" alt="">
+<head>
+    <title></title>
+    <script src="framework/angularjs-1.6.1/angular.js"></script>
+    <script src="framework/jquery-3.1.1.min.js"></script>
+    <script src="framework/ui-bootstrap-tpls.js"></script>
+    <link href="framework/bootstrap-3.3.7/css/bootstrap.css" rel="stylesheet">
+    <script>
+        angular.module('testapp',['ui.bootstrap']);
+        angular.module('PopupDemo').controller('PopupDemoCont',['$scope','$modal',function ($scope,$modal) {
+            $scope.open = function () {
+                console.log("open pop up");
+                var modalInstance = $modal.open({
+                    templateUrl:"popup.html"
+                });
+            }
+        }])
+    </script>
+</head>
+<body ng-app="PopupDemo">
+<div ng-controller="PopupDemoCont">
+    <h2 class="text-center">Angularjs-Popup</h2>
+    <button ng-click="open()" class="btn btn-warning">Simple Popup</button>
+</div>
 </body>
 </html>
-

@@ -74,3 +74,10 @@ li{
 /*#chat-window{*/
     /*height:700px; overflow:scroll;*/
 /*}*/
+.zs-image-show img{
+    width: 100%;
+}
+
+.modal-body{
+    
+}

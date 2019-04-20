@@ -2,7 +2,7 @@
  * Created by shidanlifuhetian on 2017/3/11.
  */
 // chatDetail.html页面的controller
-WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","$state", "$stateParams",function ($scope,$timeout, $state, $stateParams) {
+WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","$state","$stateParams","$uibModal",function ($scope,$timeout, $state, $stateParams,$uibModal) {
 
     $scope.outputPath={
         rootFolder:"",
@@ -135,11 +135,15 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
         console.log("loadMore sql:");
         console.log(sql);
         $scope.db.all(sql, function(err, rows) {
+            var path = require('path');
+
             for (var i in rows){
                 var message = {
                     owner:rows[i].Des,
+                    type:"",
                     content:"",
-                    time:""
+                    time:"",
+                    tmp:""
                 };
                 $scope.currentTimeStamp = rows[i].CreateTime;
                 if ($scope.currentTimeStamp - $scope.lastTimeStamp > 60*5)
@@ -155,6 +159,10 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
                         break;
                     case 3:// 图片消息
                         message.content = $scope.templateImage(rows[i]);
+                        var originImageName = rows[i].resourceName;
+                        console.log(originImageName)
+                        message.type = "image";
+                        message.tmp = path.join($scope.outputPath.imageFolder,originImageName);
                         break;
                     case 34:// 语音消息
                         message.content = $scope.templateAudio(rows[i]);
@@ -186,7 +194,7 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
                 $scope.chatData.push(message);
             }
             $scope.$apply();
-            console.log("load More done");
+            console.log("Go to page done");
             console.log($scope.generateHtml);
             if($scope.generateHtml == "true"){
                 $scope.saveRawHtml();
@@ -276,6 +284,22 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
         }
         return imgTag;
     };
+    $scope.templateImageShow = function (imgPath) {
+        var fs = require('fs');
+        var path = require('path');
+        var imgTag = "";
+        if (fs.existsSync(imgPath)){
+            var data = fs.readFileSync(imgPath);
+            imgTag = "<img>";
+            if (data != undefined) {
+                var a = data.toString("base64");
+                imgTag = "<img src='data:image/jpeg;base64," + a + "'/>";
+            }
+        }else {
+            imgTag="[图片不存在]";
+        }
+        return imgTag;
+    };
     $scope.templateAudio = function (row) {
         var fs = require('fs');
         var path = require('path');
@@ -355,8 +379,41 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
         var markup = document.documentElement.outerHTML;
         fs.writeFileSync("../distHtml/index_"+$scope.currentPage+".html",markup);
     };
+    var modalInstance = '';
 
-    $scope.on_message_click = function(){
+    $scope.on_message_click = function(message){
         console.log("message clicked!");
+        console.log(message)
+        if (message.type == "image"){
+            console.log("image clicked!")
+            console.log(message.tmp)
+
+            modalInstance = $uibModal.open({
+                animation: false,
+                templateUrl: 'templates/modalImage.html',
+                controller: 'modalOpenCtrl',
+                scope: $scope,
+                size: 'md',
+                backdrop: 'static',
+                resolve: {
+                    payload: function () {
+                        return {
+                            msg_body : $scope.templateImageShow(message.tmp),
+                        };
+                    }
+                }
+            });
+
+        }
     };
+    $scope.cancelModal = function(){
+        modalInstance.dismiss('cancel');
+    }
 }]);
+
+WechatBackupControllers.controller('modalOpenCtrl',["$scope","payload",function ($scope, payload){
+    $scope.datas = payload;
+    $scope.closeModal = function(){
+        $scope.cancelModal();
+    }
+}])
