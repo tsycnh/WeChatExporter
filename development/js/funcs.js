@@ -42,7 +42,6 @@ function getMyMd5(folderPath) {
 function getChatterMd5(tableName) {
     var sep = tableName.split("_");
     return sep.pop();
-
 }
 function imageToBase64(imgFile) {
     var fs = require('fs');
@@ -76,7 +75,6 @@ var decode_user_name_info = function (hex_string) {
     if (hex_string.substr(0,2)=="x'"){
         hex_string = hex_string.substring(2,hex_string.length-2)
     }
-
 
     let marks =['0a','12','1a','22','2a','32','3a','42']
 

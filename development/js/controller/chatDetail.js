@@ -25,7 +25,7 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
     $scope.count = 0;
     $scope.db = {};             // 数据库
     $scope.limitStart = 0;      // 加载起始位置（包含）
-    $scope.limitGap = 500;       // 每次加载limitGap条消息，默认50,即每页显示多少条信息
+    $scope.limitGap = 0;       // 每次加载limitGap条消息，默认50,即每页显示多少条信息
 
     $scope.lastTimeStamp = 0;       // 前一条消息的时间戳
     $scope.currentTimeStamp = 0;    // 当前一条消息的时间戳
@@ -218,6 +218,8 @@ WechatBackupControllers.controller('ChatDetailController',["$scope","$timeout","
         $scope.outputPath.resourceFolder = path.join($scope.outputPath.rootFolder,"resource");
 
         $scope.meInfo['headPath'] = path.join('file://',$scope.outputPath.resourceFolder,'me.png')
+        $scope.otherInfo['headPath'] = path.join('file://',$scope.outputPath.resourceFolder,'other.png')
+
         console.log($scope.outputPath);
 
         //- 打开sqlite数据库

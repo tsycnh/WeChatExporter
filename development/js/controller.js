@@ -26,7 +26,10 @@ WechatBackupControllers.controller('Soft2Controller',["$scope","$state","$stateP
     $scope.dPath = $stateParams.documentsPath;
     $scope.meInfo = JSON.parse($stateParams.meInfo);
     $scope.otherInfo = JSON.parse($stateParams.otherInfo);
+    // alert($scope.otherInfo);
+
     $scope.roomInfo = JSON.parse($stateParams.roomInfo)
+    $scope.otherWechatID = $stateParams.otherWechatID;
     $scope.wechatUserMD5 = $scope.meInfo['md5'];
     $scope.chatTableName = $scope.roomInfo['tableName'];
     // $scope.outputLimit = 100;
@@ -266,7 +269,11 @@ WechatBackupControllers.controller('Soft2Controller',["$scope","$state","$stateP
         // 2.6 存储图像
         let request = require("request");
         request($scope.meInfo['headUrl']).pipe(fs.createWriteStream(path.join($scope.targetPath.resourceFolder,'me.png')));
-
+        if (!$scope.roomInfo.isChatRoom)
+        {
+            // alert($scope.otherWechatID);
+            request($scope.otherInfo[$scope.otherWechatID]['headUrl']).pipe(fs.createWriteStream(path.join($scope.targetPath.resourceFolder, 'other.png')));
+        }
         //  3.连接mm.sqlite数据库
         let sqlite3 = require('sqlite3');
         // 打开一个sqlite数据库

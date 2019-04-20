@@ -6,7 +6,7 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
     $scope.wechatUserList = [];
     $scope.meInfo={};
     $scope.roomInfo={};
-    $scope.otherInfo={}
+    $scope.otherInfo={};
     $scope.everLoggedThisPhoneWchatUsersInfo ={};//index by md5
     $scope.dbTables = [];
     $scope.isChatRoom = [];
@@ -99,7 +99,6 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
                 wechatID:row.userName,
                 rawNameInfo:row.cr//如果是chatroom，那么nameInfo.nickname就是房间名，如果不是chatroom，nameInfo.nickname就是对方昵称
             };
-
 
         },function (error, result) {
             console.log('names over:',result);
@@ -227,9 +226,10 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
         var sqlite3 = require('sqlite3');
         var fs = require('fs')
         $scope.currentFriend = $scope.myFriends[getChatterMd5($scope.tableSelected['md5'])];
-
+        $scope.isChatRoom = false;
         if ($scope.tableSelected.isChatRoom){
             console.log("群组聊天")
+            $scope.currentFriend.wechatID = ""
             //群组聊天
         }else{
             console.log("一对一聊天")
@@ -267,7 +267,8 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
             documentsPath:$scope.documentsPath,
             meInfo:JSON.stringify($scope.meInfo),
             otherInfo:JSON.stringify($scope.otherInfo),
-            roomInfo:JSON.stringify($scope.tableSelected)
+            roomInfo:JSON.stringify($scope.tableSelected),
+            otherWechatID:$scope.currentFriend.wechatID
         });
     }
 }]);
