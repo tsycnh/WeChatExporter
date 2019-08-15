@@ -18,7 +18,7 @@ Step1:数据导出：
 
 ![image](https://github.com/tsycnh/WeChatExporter/blob/master/imgs/for%20readme/backup2.png)
 
-Step2:安装nodejs（8.11.3版本） 下载地址：https://nodejs.org/dist/v8.11.3/node-v8.11.3-x64.msi
+Step2:安装nodejs（8.11.3版本） 下载地址：https://nodejs.org/dist/v8.11.3/node-v8.11.3.pkg
 
 Step3:安装nwjs（0.32.1版本） 下载地址：https://dl.nwjs.io/v0.32.1/nwjs-v0.32.1-osx-x64.zip
 
