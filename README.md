@@ -18,9 +18,9 @@ Step1:数据导出：
 
 ![image](https://github.com/tsycnh/WeChatExporter/blob/master/imgs/for%20readme/backup2.png)
 
-Step2:安装nodejs（8.11.3版本） 下载地址：https://nodejs.org/dist/v8.11.3/node-v8.11.3.pkg
+Step2:安装nodejs 下载地址：https://nodejs.org
 
-Step3:安装nwjs（0.32.1版本） 下载地址：https://dl.nwjs.io/v0.32.1/nwjs-v0.32.1-osx-x64.zip
+Step3:安装nwjs 下载地址：https://dl.nwjs.io
 
 ### 二、运行软件
 
@@ -32,7 +32,37 @@ Step3: `cd development`
 
 Step4: `npm install`
 
-Step5: copy `framework/node-webkit-v0.32.1-darwin-x64` to `node_modules/sqlite3/lib/binding`
+Step5: 编译sqlite3.
+
+1.  安装Xcode（AppStore 直接安装）
+2.  `sudo npm install -g node-gyp`
+3.	`npm install sqlite3 --build-from-source --runtime=node-webkit --target_arch=x64 --target=0.40.1 --python=/System/Library/Frameworks/Python.framework/Versions/2.7/bin/python2.7 --registry=https://registry.npm.taobao.org`
+
+注意事项：
+* 【必须】target_arch参数为ia32或x64 ，分别对应32位或64位的nwjs
+* 【必须】target参数为你所用的nwjs版本
+* 【可选】Python为自定义的路径，必须为2.7版本。默认可不指定此参数。
+* 【可选】Registry为国内镜像节点，下载不顺可尝试添加此参数 
+
+4.	如果出现 
+xcode-select: error: tool 'xcodebuild' requires Xcode, but active developer directory '/Library/Developer/CommandLineTools' is a command line tools instance
+则是未安装Xcode或Xcode相关设置问题造成的。
+安装之。安装完之后在终端输入
+`sudo xcodebuild -license`
+按[space]全部读完后输入agree
+回到第3.步
+如仍无法解决，可参考此：https://stackoverflow.com/questions/17980759/xcode-select-active-developer-directory-error/40819686#40819686
+
+5.	编译完成后会在如下目录出现已编译好的文件。
+`Path/to/WeChatExporter/development/node_modules/sqlite3/lib/binding/node-webkit-v0.40.1-darwin-x64/node_sqlite3.node`
+用的nwjs版本不同，生成的文件也不一样。
+
+\*懒人看这↓*\
+如果你用库版本为以下之一:
+nodejs==8.11.3 nwjs==0.32.1
+nodejs==10.16.3 nwjs==0.40.1
+
+我已经将编译好的node_sqlite3.node文件放在了development/framework之下，直接拷贝到`Path/to/WeChatExporter/development/node_modules/sqlite3/lib/binding/`即可
 
 Step6: `/path/to/nw/nwjs.app/Contents/MacOS/nwjs .`
 
@@ -77,7 +107,3 @@ PS:目前有些流程还是有些累赘和繁琐，有待改进
 * 为微信用户添加昵称
 * 导出html功能
 * 聊天查看页面增加图像点击放大 ✔
-
-第三方库版本
-nodejs 8.11.3
-nwjs   0.32.1
