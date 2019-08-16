@@ -16,7 +16,7 @@ WechatBackupControllers.controller('ChatListController',["$scope","$state", "$st
     $scope.previewData = [];
     $scope.filePath = "";
     $scope.documentsPath = $stateParams.documentsPath;
-    $scope.messageLimit = 100;
+    $scope.messageLimit = 10;
 
     $scope.parseMmsetting = function (mmsettingPath) {
         var fs = require('fs');
