@@ -44,13 +44,19 @@ Step5: 编译sqlite3.
 * 【可选】Python为自定义的路径，必须为2.7版本。默认可不指定此参数。
 * 【可选】Registry为国内镜像节点，下载不顺可尝试添加此参数 
 
-4.	如果出现 
-xcode-select: error: tool 'xcodebuild' requires Xcode, but active developer directory '/Library/Developer/CommandLineTools' is a command line tools instance
+4.	如果出现   
+xcode-select: error: tool 'xcodebuild' requires Xcode, but active developer directory '/Library/Developer/CommandLineTools' is a command line tools instance  
+
 则是未安装Xcode或Xcode相关设置问题造成的。
+
 安装之。安装完之后在终端输入
+
 `sudo xcodebuild -license`
+
 按[space]全部读完后输入agree
+
 回到第3.步
+
 如仍无法解决，可参考此：https://stackoverflow.com/questions/17980759/xcode-select-active-developer-directory-error/40819686#40819686
 
 5.	编译完成后会在如下目录出现已编译好的文件。
@@ -58,9 +64,9 @@ xcode-select: error: tool 'xcodebuild' requires Xcode, but active developer dire
 用的nwjs版本不同，生成的文件也不一样。
 
 \*懒人看这↓*\
-如果你用库版本为以下之一:
-nodejs==8.11.3 nwjs==0.32.1
-nodejs==10.16.3 nwjs==0.40.1
+如果你用库版本为以下之一:  
+nodejs==8.11.3 nwjs==0.32.1  
+nodejs==10.16.3 nwjs==0.40.1  
 
 我已经将编译好的node_sqlite3.node文件放在了development/framework之下，直接拷贝到`Path/to/WeChatExporter/development/node_modules/sqlite3/lib/binding/`即可
 
