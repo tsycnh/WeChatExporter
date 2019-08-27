@@ -1,5 +1,10 @@
 # WeChatExporter
 
+A software to export wechat records, which you review your chattings on your computer.  
+If there is any non-Chinese user trying to use this software, let me know, I will add an English version.  
+
+===
+
 微信聊天记录导出工具。无需越狱手机，即可导出备份微信聊天记录。目前支持文字、语音、图片、视频的查看。
 项目基于nodejs实现，框架采用angularjs
 
