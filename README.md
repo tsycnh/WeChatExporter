@@ -1,7 +1,7 @@
 # WeChatExporter
 
-A software to export wechat records, which you review your chattings on your computer.  
-If there is any non-Chinese user trying to use this software, let me know, I will add an English version.  
+A software to export wechat records, which you can review your chattings on your computer.  
+If there is any non-Chinese user trying to use this software, open an issue let me know, I will add an English version.  
 
 ===
 
