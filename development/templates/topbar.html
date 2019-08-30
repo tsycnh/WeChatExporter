@@ -4,13 +4,45 @@
         <div class="navbar-header">
             <a class="navbar-brand" ui-sref="newEntry">微信备份</a>
         </div>
+
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 <li><a go-to-previous-page><span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
-                </a></li>
+                    </a></li>
                 <li><a go-to-next-page><span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
-                </a></li>
+                    </a></li>
+            </ul>
+        
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                        aria-expanded="false">工具<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a ng-click="exportLog()" href="#">导出运行日志</a></li>
+                    </ul>
+                </li>
             </ul>
         </div><!-- /.navbar-collapse -->
+
     </div><!-- /.container-fluid -->
+    <div class="modal fade" tabindex="-1" role="dialog" id="exportLogModal">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              <h4 class="modal-title">运行日志已导出</h4>
+            </div>
+            <div class="modal-body">
+              <p>运行日志已保存在，有疑问可以提issue，务必附上日志内容。</p>
+              <p>↓提issue，报bug↓</p>
+              <p>https://github.com/tsycnh/WeChatExporter/issues</p>
+            </div>
+            <!-- <div class="modal-footer">
+              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary">Save changes</button>
+            </div> -->
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
 </nav>
+

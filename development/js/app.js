@@ -1,6 +1,8 @@
 // 定义app模块，并声明其依赖的模块。
 // 模块说明：ui.router: 路由模块 参考：https://ui-router.github.io/ng1/
 //         WechatBackupControllers:所有控制器 定义在 js/controllers.js
+var bugout = new debugout();
+
 var WechatBackup = angular.module('WechatBackup',['ui.router','ui.bootstrap','WechatBackupControllers','WechatBackupDirectives','WechatBackupFilters','ngSanitize']);
 
 WechatBackup.config(["$stateProvider","$urlRouterProvider",function ($stateProvider,$urlRouterProvider) {

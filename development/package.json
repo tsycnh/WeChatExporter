@@ -1,6 +1,6 @@
 {
   "name": "WechatExporter",
-  "version": "1.0",
+  "version": "1.0.1",
   "description": "微信备份",
   "main": "index.html",
   "window": {
@@ -15,7 +15,9 @@
     "frame": true
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dist": "build --tasks win-x86,win-x64,linux-x86,linux-x64,mac-x64 --mirror https://dl.nwjs.io/ .",
+    "start": "run --x64 --mirror https://dl.nwjs.io/ ."
   },
   "author": "",
   "chromium-args": "-allow-file-access-from-files",
@@ -45,6 +47,10 @@
     "grunt-shell": "^2.1.0",
     "grunt-strip": "~0.2.1",
     "grunt-usemin": "^3.1.1",
-    "nw-builder": "^3.1.3"
+    "nw-builder": "^3.1.3",
+    "nwjs-builder-phoenix": "^1.15.0"
+  },
+  "build": {
+    "nwVersion": "0.40.1"
   }
 }
