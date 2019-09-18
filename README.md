@@ -50,7 +50,9 @@ Step5: 编译sqlite3.
 * 【可选】Registry为国内镜像节点，下载不顺可尝试添加此参数 
 
 4.	如果出现   
+```
 xcode-select: error: tool 'xcodebuild' requires Xcode, but active developer directory '/Library/Developer/CommandLineTools' is a command line tools instance  
+```
 
 则是未安装Xcode或Xcode相关设置问题造成的。
 
@@ -73,7 +75,7 @@ xcode-select: error: tool 'xcodebuild' requires Xcode, but active developer dire
 nodejs==8.11.3 nwjs==0.32.1  
 nodejs==10.16.3 nwjs==0.40.1  
 
-我已经将编译好的node_sqlite3.node文件放在了development/framework之下，直接拷贝到`Path/to/WeChatExporter/development/node_modules/sqlite3/lib/binding/`即可
+我已经将编译好的node_sqlite3.node文件放在了development/framework之下，将对应版本的文件夹拷贝到`Path/to/WeChatExporter/development/node_modules/sqlite3/lib/binding/`即可
 
 Step6: `/path/to/nw/nwjs.app/Contents/MacOS/nwjs .`
 
