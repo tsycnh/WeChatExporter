@@ -73,33 +73,27 @@ var hex_to_utf8 = function (hex_string) {
 };
 var decode_user_name_info = function (hex_string) {
     if (hex_string.substr(0, 2) == "x'") {
-        hex_string = hex_string.substring(2, hex_string.length - 2)
+        hex_string = hex_string.substring(2, hex_string.length - 1)
     }
 
-    let marks = ['0a', '12', '1a', '22', '2a', '32', '3a', '42']
+    // let marks = ['0a', '12', '1a', '22', '2a', '32', '3a', '42']
 
     var i = 0
-    var mark_i = 0
-    var all_data = []
+    var all_data = {}
     while (i < hex_string.length) {
         var current_mark = hex_string.substr(i, 2)
-        if (current_mark == marks[mark_i]) {
-            var data_length = hex_string.substr(i + 2, 2)
-            var data_length = parseInt(data_length, 16) * 2;//hex to dec
-            var hex_data = hex_string.substr(i + 4, data_length)
-            var utf8_data = hex_to_utf8(hex_data)
-            i += 4 + data_length
-            mark_i += 1
-            all_data.push(utf8_data)
-        } else {
-            console.log('出错：mark不符！')
-        }
+        var data_length = hex_string.substr(i + 2, 2)
+        var data_length = parseInt(data_length, 16) * 2;//hex to dec
+        var hex_data = hex_string.substr(i + 4, data_length)
+        var utf8_data = hex_to_utf8(hex_data)
+        i += 4 + data_length
+        all_data[current_mark] = utf8_data
     }
     // console.log(all_data)
     return {
-        "nickname": all_data[0],
-        "wechatID": all_data[1],
-        "remark": all_data[2]
+        "nickname": all_data['0a'],
+        "wechatID": all_data['12'],
+        "remark": all_data['1a']
     }
 }
 
