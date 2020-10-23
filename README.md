@@ -1,5 +1,21 @@
 # WeChatExporter
 
+
+2020年10月23日：  
+
+这个项目从创建到现在已经三年了，最开始只是为了自己备份聊天记录查看用。后来到现在越来越多的人开始star这个项目，到目前已经近600个star了。fork也近100个。
+说实话这个项目我做得还有非常多不完善的地方。比如消息类别显示的并不全面，不支持Windows与安卓等等。然后对于新手来说操作也不是特别的方便。
+这些问题我也是非常想解决掉，但无奈时间和精力不允许，项目基本处于放弃状态。
+等我有时间，闲下来了，可能会继续把这个项目完善一下。
+当然，开源最伟大的精神就是互相合作。这个项目非常需要大家的PR。
+可能大家提的issue我无力解答，但是PR我一定会第一时间查看并回复。  
+
+以上。
+
+
+
+===
+
 A software to export wechat records, which you can review your chattings on your computer.  
 If there is any non-Chinese user trying to use this software, open an issue let me know, I will add an English version.  
 
